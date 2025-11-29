@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "android": true
+  },
+  "search.exclude": {
+    "android": true
+  }
+}
