@@ -25,6 +25,7 @@ class MainApp extends StatelessWidget {
       title: "Aviation Management System",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryColor: Colors.black,
         primarySwatch: Colors.blue,
         useMaterial3: true
       ),
