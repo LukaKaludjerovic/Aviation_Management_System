@@ -3,10 +3,12 @@ namespace aerosense.controllers;
 using aerosense.extensions;
 using aerosense.models.aerosense;
 using aerosense.models.context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/role")]
+[Authorize]
 public class RoleController : ControllerBase
 {
     [HttpGet]

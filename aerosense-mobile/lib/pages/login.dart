@@ -168,7 +168,7 @@ class _LoginState extends State<Login> {
                     const SizedBox(height: 24),
                           
                     if (_loading) ...[
-                      const CircularProgressIndicator()
+                      CircularProgressIndicator(color: Colors.lightBlue[300])
                     ] else ...[
                       ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 250),
@@ -176,10 +176,21 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _loading ? null : _login,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[300],
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return Colors.lightBlue[300]!;
+                                } else if (states.contains(WidgetState.disabled)) {
+                                  return Colors.grey[300]!;
+                                }
+                                return Colors.grey[300]!;
+                              }),
+                              padding: WidgetStateProperty.all(
+                                const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
                             ),
                             child: const Text(
                               "Login",

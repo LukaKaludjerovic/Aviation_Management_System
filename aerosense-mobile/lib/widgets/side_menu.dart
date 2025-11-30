@@ -62,7 +62,7 @@ class SideMenu extends StatelessWidget {
               },
             ),
 
-            if (Auth.instance.allowed(Permission.settings)) ...[
+            if (Auth.instance.allowed(Permission.settingsProfiles) || Auth.instance.allowed(Permission.settingsRoles)) ...[
               Theme(
                 data: Theme.of(context).copyWith(
                   dividerColor: Colors.transparent,

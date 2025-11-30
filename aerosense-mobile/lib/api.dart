@@ -33,7 +33,7 @@ class Api {
     return uri;
   }
 
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     final statusCode = response.statusCode;
 
     if (statusCode >= 200 && statusCode < 300) {
@@ -70,8 +70,7 @@ class Api {
     }
   }
 
-
-  Future<Map<String, dynamic>> get(String endpoint, {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParams}) async {
     final url = _buildUri(endpoint, queryParams);
 
     try {
@@ -89,7 +88,7 @@ class Api {
     }
   }
 
-  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> post(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
     final url = _buildUri(endpoint, queryParams);
 
     try {
@@ -108,7 +107,7 @@ class Api {
     }
   }
 
-  Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> put(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
     final url = _buildUri(endpoint, queryParams);
 
     try {
@@ -127,7 +126,7 @@ class Api {
     }
   }
 
-  Future<Map<String, dynamic>> delete(String endpoint, {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> delete(String endpoint, {Map<String, dynamic>? queryParams}) async {
     final url = _buildUri(endpoint, queryParams);
 
     try {
