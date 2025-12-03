@@ -1,5 +1,5 @@
 class MenuItem {
-  static const settingsProfiles = "settingsProfiles";
-  static const settingsRoles = "settingsRoles";
-  static const home = "Home";
+  static const String settingsProfiles = 'settingsProfiles';
+  static const String settingsRoles = 'settingsRoles';
+  static const String home = 'Home';
 }

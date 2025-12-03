@@ -12,35 +12,30 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String _selected = MenuItem.home;
-
-  void setSelected(String selected) => _selected = selected;
+  String selected = MenuItem.home;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const Header(),
       drawer: SideMenu(
-        selected: _selected,
-        onSelect: (item) {
-          setSelected(item);
+        selected: selected,
+        onSelect: (String item) {
+          selected = item;
 
           switch (item) {
             case MenuItem.settingsProfiles:
-              navigatorKey.currentState?.pushReplacementNamed("/profiles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/profiles');
 
             case MenuItem.settingsRoles:
-              navigatorKey.currentState?.pushReplacementNamed("/roles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/roles');
 
             case MenuItem.home:
-              navigatorKey.currentState?.pushReplacementNamed("/home");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/home');
           }
         },
       ),
-      body: const Center(child: Text("Home"))
+      body: const Center(child: Text('Home'))
     );
   }
 }

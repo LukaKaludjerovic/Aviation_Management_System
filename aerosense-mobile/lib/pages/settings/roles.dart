@@ -14,11 +14,9 @@ class Roles extends StatefulWidget{
 }
 
 class _RolesState extends State<Roles> {
-  String _selected = MenuItem.settingsRoles;
+  String selected = MenuItem.settingsRoles;
 
-  List<Map<String, dynamic>> _roles = [];
-
-  void setSelected(String selected) => _selected = selected;
+  List<Map<String, dynamic>> _roles = <Map<String, dynamic>>[];
 
   @override
   void initState() {
@@ -26,41 +24,45 @@ class _RolesState extends State<Roles> {
     _fetchRoles();
   }
 
-  void _fetchRoles() async {
-    final response = await Api.instance.get("/api/role");
+  Future<void> _fetchRoles() async {
+    final List<dynamic> response = await Api.instance.get('/api/role') as List<dynamic>;
 
-    if (response is List) {
-      setState(() {
-        _roles = List<Map<String, dynamic>>.from(response);
-      });
-    }
+    setState(() {
+      _roles = response
+        .map((dynamic e) => e as Map<String, dynamic>)
+        .toList();
+    });
+
+    setState(() {
+      _roles = List<Map<String, dynamic>>.from(response as Iterable<dynamic>);
+    });
   }
 
   void _openRoleDialog(Map<String, dynamic> role) {
-    final TextEditingController name = TextEditingController(text: role["name"]);
+    final TextEditingController name = TextEditingController(text: (role['name'] ?? '') as String);
 
-    List<String> selectedFunctions = (role["allowedFunctions"] ?? "")
+    final List<String> selectedFunctions = (role['allowedFunctions'] ?? '')
       .toString()
-      .split(",")
-      .map((f) => f.trim())
-      .where((f) => f.isNotEmpty)
+      .split(',')
+      .map((String f) => f.trim())
+      .where((String f) => f.isNotEmpty)
       .toList();
 
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: role["id"] == 0 
-                ? Text("New role") 
-                : Text("Edit role"),
+              title: role['id'] == 0 
+                ? const Text('New role') 
+                : const Text('Edit role'),
               content: SizedBox(
                 width: 400,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Theme(
                       data: Theme.of(context).copyWith(
                         inputDecorationTheme: const InputDecorationTheme(
@@ -70,7 +72,6 @@ class _RolesState extends State<Roles> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.black,
                               width: 2,
                             ),
                           ),
@@ -79,24 +80,32 @@ class _RolesState extends State<Roles> {
                       child: TextField(
                         autofocus: true,
                         controller: name,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),
                         decoration: const InputDecoration(
-                          labelText: "Role Name",
+                          labelText: 'Role Name',
                           labelStyle: TextStyle(
                             color: Colors.black,
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
+                            borderSide: BorderSide(
+                              color: Colors.grey
+                            ),
                           ),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(
+                      height: 16
+                    ),
 
                     const Text(
-                      "Allowed Functions",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      'Allowed Functions',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
 
                     SizedBox(
@@ -104,21 +113,22 @@ class _RolesState extends State<Roles> {
                       width: double.infinity,
                       child: Scrollbar(
                         child: ListView(
-                          children: Permission.all.map((func) {
+                          children: Permission.all.map((String func) {
                             return CheckboxListTile(
                               title: Text(func),
                               value: selectedFunctions.contains(func),
-                              fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                              fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
                                 if (states.contains(WidgetState.selected)) {
                                   return Colors.black;
                                 }
                                 return Colors.transparent;
                               }),
-                              onChanged: (checked) {
+                              onChanged: (bool? checked) {
                                 setState(() {
-                                  if (checked == true) {
+                                  if (checked ?? false) {
                                     selectedFunctions.add(func);
-                                  } else {
+                                  } 
+                                  else {
                                     selectedFunctions.remove(func);
                                   }
                                 });
@@ -132,26 +142,26 @@ class _RolesState extends State<Roles> {
                 ),
               ),
 
-              actions: [
+              actions: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    role["id"] != 0
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    if (role['id'] != 0) Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: [
+                          children: <Widget>[
                             TextButton(
                               onPressed: () async {
                                 await Api.instance.delete("/api/role/${role["id"]}");
 
                                 _fetchRoles();
 
-                                if (!context.mounted) return;
+                                if (!context.mounted) {
+                                  return;
+                                }
                                 Navigator.pop(context);
                               }, 
                               child: const Text(
-                                "Delete",
+                                'Delete',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold, 
                                   color: Colors.black
@@ -159,16 +169,15 @@ class _RolesState extends State<Roles> {
                               )
                             ),
                           ],
-                        )
-                      : Row(),
+                        ) 
+                        else const Row(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: const Text(
-                            "Cancel",
+                            'Cancel',
                             style: TextStyle(
                               fontWeight: FontWeight.bold, 
                               color: Colors.black
@@ -177,31 +186,33 @@ class _RolesState extends State<Roles> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            if (role["id"] == 0) {
-                              final newRole = {
-                                "name": name.text.trim(),
-                                "allowedFunctions": selectedFunctions.join(","),
+                            if (role['id'] == 0) {
+                              final Map<String, String> newRole = <String, String>{
+                                'name': name.text.trim(),
+                                'allowedFunctions': selectedFunctions.join(','),
                               };
 
-                              await Api.instance.post("/api/role", newRole);
+                              await Api.instance.post('/api/role', newRole);
                             }
                             else {
-                              final updatedRole = {
-                                "id": role["id"],
-                                "name": name.text.trim(),
-                                "allowedFunctions": selectedFunctions.join(","),
+                              final Map<String, dynamic> updatedRole = <String, dynamic>{
+                                'id': role['id'],
+                                'name': name.text.trim(),
+                                'allowedFunctions': selectedFunctions.join(','),
                               };
 
-                              await Api.instance.put("/api/role", updatedRole);
+                              await Api.instance.put('/api/role', updatedRole);
                             }
                             
                             _fetchRoles();
 
-                            if (!context.mounted) return;
+                            if (!context.mounted) {
+                              return;
+                            }
                             Navigator.pop(context);
                           }, 
                           child: const Text(
-                            "Save",
+                            'Save',
                             style: TextStyle(
                               fontWeight: FontWeight.bold, 
                               color: Colors.black
@@ -223,24 +234,21 @@ class _RolesState extends State<Roles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(),
+      appBar: const Header(),
       drawer: SideMenu(
-        selected: _selected,
-        onSelect: (item) {
-          setSelected(item);
+        selected: selected,
+        onSelect: (String item) {
+          selected = item;
 
           switch (item) {
             case MenuItem.settingsProfiles:
-              navigatorKey.currentState?.pushReplacementNamed("/profiles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/profiles');
 
             case MenuItem.settingsRoles:
-              navigatorKey.currentState?.pushReplacementNamed("/roles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/roles');
 
             case MenuItem.home:
-              navigatorKey.currentState?.pushReplacementNamed("/home");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/home');
           }
         },
       ),
@@ -250,27 +258,27 @@ class _RolesState extends State<Roles> {
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Center(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Spacer(),
-                        Text(
-                          "Roles",
+                      children: <Widget>[
+                        const Spacer(),
+                        const Text(
+                          'Roles',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         IconButton(
                           onPressed: () {
-                            _openRoleDialog({"id": 0});
+                            _openRoleDialog(<String, dynamic>{'id': 0});
                           }, 
-                          icon: Icon(Icons.add_circle),
+                          icon: const Icon(Icons.add_circle),
                           iconSize: 32,
                         )
                       ],
@@ -280,18 +288,20 @@ class _RolesState extends State<Roles> {
         
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 500),
+                        constraints: const BoxConstraints(
+                          minWidth: 500
+                        ),
                         child: DataTable(
                           columnSpacing: 60,
                           dataRowMaxHeight: double.infinity,
-                          columns: const [
+                          columns: const <DataColumn>[
                             DataColumn(
                               label: Text(
-                                "Name",
+                                'Name',
                                 style: TextStyle(
                                   fontSize: 18, 
                                   fontWeight: FontWeight.bold
@@ -299,24 +309,24 @@ class _RolesState extends State<Roles> {
                               )
                             ),
                             DataColumn(label: Text(
-                              "Allowed Functions",
+                              'Allowed Functions',
                               style: TextStyle(
                                   fontSize: 18, 
                                   fontWeight: FontWeight.bold
                                 )
                             )),
                           ], 
-                          rows: _roles.map((role) {
-                            final allowedFunctions = 
-                              role["allowedFunctions"]
+                          rows: _roles.map((Map<String, dynamic> role) {
+                            final String allowedFunctions = 
+                              role['allowedFunctions']
                               .toString()
-                              .replaceAll(",", ", ");
+                              .replaceAll(',', ', ');
                             
                             return DataRow(
-                              cells: [
+                              cells: <DataCell>[
                                 DataCell(
                                   Text(
-                                    role["name"].toString(),
+                                    role['name'].toString(),
                                     style: const TextStyle(fontSize: 16),
                                   ),
                                   onTap: () => _openRoleDialog(role)

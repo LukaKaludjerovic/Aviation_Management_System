@@ -5,19 +5,19 @@ import 'package:aerosense/model/permission.dart';
 import 'package:flutter/material.dart';
 
 class SideMenu extends StatelessWidget {
-  final String selected;
-  final Function(String) onSelect;
-
   const SideMenu({
     super.key,
     required this.selected,
     required this.onSelect
   });
+  
+  final String selected;
+  final void Function(String) onSelect;
 
-  void _logout() async {
+  Future<void> _logout() async {
     await Auth.instance.logout();
     
-    navigatorKey.currentState?.pushReplacementNamed("/login");
+    navigatorKey.currentState?.pushReplacementNamed('/login');
   }
 
   @override
@@ -25,10 +25,10 @@ class SideMenu extends StatelessWidget {
     return Drawer(
       child: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text(
-                "${Auth.instance.getFirstName} ${Auth.instance.getLastName}",
+                '${Auth.instance.firstName} ${Auth.instance.lastName}',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: selected == MenuItem.home
@@ -37,7 +37,7 @@ class SideMenu extends StatelessWidget {
                 ),
               ),
               accountEmail: Text(
-                Auth.instance.getRoleName,
+                Auth.instance.roleName,
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: selected == MenuItem.home
@@ -53,22 +53,18 @@ class SideMenu extends StatelessWidget {
                   color: Colors.black
                 ),
               ),
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
+              decoration: const BoxDecoration(color: Colors.transparent),
               onDetailsPressed: () {
                 Navigator.pop(context);
                 onSelect(MenuItem.home);
               },
             ),
 
-            if (Auth.instance.allowed(Permission.settingsProfiles) || Auth.instance.allowed(Permission.settingsRoles)) ...[
+            if (Auth.instance.allowed(Permission.settingsProfiles) || Auth.instance.allowed(Permission.settingsRoles)) ...<Widget>[
               Theme(
                 data: Theme.of(context).copyWith(
                   dividerColor: Colors.transparent,
-                  iconTheme: const IconThemeData(
-                    color: Colors.black,
-                  ),
+                  iconTheme: const IconThemeData(color: Colors.black),
                   expansionTileTheme: const ExpansionTileThemeData(
                     iconColor: Colors.black,
                     collapsedIconColor: Colors.black,
@@ -80,7 +76,7 @@ class SideMenu extends StatelessWidget {
                   initiallyExpanded: selected == MenuItem.settingsProfiles || selected == MenuItem.settingsRoles,
                   leading: const Icon(Icons.settings),
                   title: Text(
-                    "Settings",
+                    'Settings',
                     style: TextStyle(
                       fontWeight: selected == MenuItem.settingsProfiles || selected == MenuItem.settingsRoles
                         ? FontWeight.bold
@@ -91,12 +87,12 @@ class SideMenu extends StatelessWidget {
                     left: 40, 
                     right: 40
                   ),
-                  children: [
+                  children: <Widget>[
                     if (Auth.instance.allowed(Permission.settingsProfiles))
                       ListTile(
                         leading: const Icon(Icons.manage_accounts),
                         title: Text(
-                          "Profiles",
+                          'Profiles',
                           style: TextStyle(
                             fontWeight: selected == MenuItem.settingsProfiles
                               ? FontWeight.bold
@@ -114,7 +110,7 @@ class SideMenu extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.admin_panel_settings),
                         title: Text(
-                          "Roles",
+                          'Roles',
                           style: TextStyle(
                             fontWeight: selected == MenuItem.settingsRoles
                               ? FontWeight.bold
@@ -131,12 +127,12 @@ class SideMenu extends StatelessWidget {
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
             ],
 
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text("Logout"),
+              title: const Text('Logout'),
               onTap: () {
                 Navigator.pop(context);
                 _logout();

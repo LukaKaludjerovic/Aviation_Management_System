@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
+  await dotenv.load();
 
   runApp(const MainApp());
 }
@@ -22,18 +22,18 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
-      title: "Aviation Management System",
+      title: 'Aviation Management System',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true
       ),
-      initialRoute: "/login",
-      routes: {
-        "/login": (context) => const Login(),
-        "/home": (context) => const Home(),
-        "/profiles": (context) => const Profiles(),
-        "/roles": (context) => Roles()
+      initialRoute: '/login',
+      routes: <String, WidgetBuilder>{
+        '/login': (BuildContext context) => const Login(),
+        '/home': (BuildContext context) => const Home(),
+        '/profiles': (BuildContext context) => const Profiles(),
+        '/roles': (BuildContext context) => const Roles()
       },
     );
   }

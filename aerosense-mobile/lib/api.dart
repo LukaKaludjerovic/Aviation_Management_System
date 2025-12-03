@@ -1,32 +1,34 @@
-import "dart:convert";
-import "package:aerosense/main.dart";
-import "package:flutter/material.dart";
-import "package:flutter_dotenv/flutter_dotenv.dart";
-import "package:http/http.dart" as http;
+import 'dart:convert';
+import 'package:aerosense/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class Api {
   Api._privateConstructor();
   static final Api instance = Api._privateConstructor();
 
-  final String baseUrl = dotenv.env["API_URL"]!;
+  final String baseUrl = dotenv.env['API_URL']!;
   String? _token;
 
-  void setToken(String token) => _token = token;
+  set token(String value) => _token = value;
+  String get token => _token ?? '';
+
   void clearToken() => _token = null;
 
   Map<String, String> _headers() {
-    return {
-      "Content-Type": "application/json",
-      if (_token != null && _token!.isNotEmpty == true) "Authorization": _token!
+    return <String, String>{
+      'Content-Type': 'application/json',
+      if (_token != null && _token!.isNotEmpty) 'Authorization': _token!
     };
   }
 
   Uri _buildUri(String endpoint, [Map<String, dynamic>? queryParams]) {
-    final uri = Uri.parse("$baseUrl$endpoint");
+    final Uri uri = Uri.parse('$baseUrl$endpoint');
     
     if (queryParams != null && queryParams.isNotEmpty) {
       return uri.replace(
-        queryParameters: queryParams.map((k, v) => MapEntry(k, v.toString())
+        queryParameters: queryParams.map((String k, dynamic v) => MapEntry<String, String>(k, v.toString())
       ));
     }
 
@@ -34,24 +36,26 @@ class Api {
   }
 
   dynamic _handleResponse(http.Response response) {
-    final statusCode = response.statusCode;
+    final int statusCode = response.statusCode;
 
     if (statusCode >= 200 && statusCode < 300) {
       if (response.body.isEmpty) {
-        return {};
+        return <dynamic>{};
       }
 
       return jsonDecode(response.body);
-    } else {
-      final errorMessage = jsonDecode(response.body)["error"];
+    } 
+    else {
+      final Map<String, dynamic> decodedResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final String errorMessage = decodedResponse['error'] as String;
 
       throw ApiException(errorMessage, statusCode);
     }
   }
 
   void _handleError(Object error) {
-    final ctx = navigatorKey.currentContext;
-    String message = "Unknown error occured.";
+    final BuildContext? ctx = navigatorKey.currentContext;
+    String message = 'Unknown error occured.';
     
     if (error is ApiException) {
       message = error.message;
@@ -71,15 +75,15 @@ class Api {
   }
 
   Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParams}) async {
-    final url = _buildUri(endpoint, queryParams);
+    final Uri url = _buildUri(endpoint, queryParams);
 
     try {
-      final response = await http
+      final http.Response response = await http
         .get(
           url,
           headers: _headers()
         )
-        .timeout(Duration(seconds: 30));
+        .timeout(const Duration(seconds: 30));
 
       return _handleResponse(response);
     } catch (e) {
@@ -89,16 +93,16 @@ class Api {
   }
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
-    final url = _buildUri(endpoint, queryParams);
+    final Uri url = _buildUri(endpoint, queryParams);
 
     try {
-      final response = await http
+      final http.Response response = await http
         .post(
           url,
           headers: _headers(),
           body: json.encode(body),
         )
-        .timeout(Duration(seconds: 30));
+        .timeout(const Duration(seconds: 30));
 
       return _handleResponse(response);
     } catch (e) {
@@ -108,16 +112,16 @@ class Api {
   }
 
   Future<dynamic> put(String endpoint, Map<String, dynamic> body, {Map<String, dynamic>? queryParams}) async {
-    final url = _buildUri(endpoint, queryParams);
+    final Uri url = _buildUri(endpoint, queryParams);
 
     try {
-      final response = await http
+      final http.Response response = await http
         .put(
           url,
           headers: _headers(),
           body: json.encode(body),
         )
-        .timeout(Duration(seconds: 30));
+        .timeout(const Duration(seconds: 30));
 
       return _handleResponse(response);
     } catch (e) {
@@ -127,15 +131,15 @@ class Api {
   }
 
   Future<dynamic> delete(String endpoint, {Map<String, dynamic>? queryParams}) async {
-    final url = _buildUri(endpoint, queryParams);
+    final Uri url = _buildUri(endpoint, queryParams);
 
     try {
-      final response = await http
+      final http.Response response = await http
         .delete(
           url,
           headers: _headers()
         )
-        .timeout(Duration(seconds: 30));
+        .timeout(const Duration(seconds: 30));
 
       return _handleResponse(response);
     } catch (e) {
@@ -146,10 +150,10 @@ class Api {
 }
 
 class ApiException implements Exception {
+  ApiException(this.message, [this.statusCode]);
+
   final String message;
   final int? statusCode;
-
-  ApiException(this.message, [this.statusCode]);
 
   @override
   String toString() => 'ApiException($statusCode): $message';

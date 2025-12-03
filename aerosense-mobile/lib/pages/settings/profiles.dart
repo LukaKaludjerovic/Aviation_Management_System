@@ -12,37 +12,30 @@ class Profiles extends StatefulWidget{
 }
 
 class _ProfilesState extends State<Profiles> {
-  String _selected = MenuItem.settingsProfiles;
-
-  void setSelected(String selected) => _selected = selected;
+  String selected = MenuItem.settingsProfiles;
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(),
+      appBar: const Header(),
       drawer: SideMenu(
-        selected: _selected,
-        onSelect: (item) {
-          setSelected(item);
+        selected: selected,
+        onSelect: (String item) {
+          selected = item;
 
           switch (item) {
             case MenuItem.settingsProfiles:
-              navigatorKey.currentState?.pushReplacementNamed("/profiles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/profiles');
 
             case MenuItem.settingsRoles:
-              navigatorKey.currentState?.pushReplacementNamed("/roles");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/roles');
 
             case MenuItem.home:
-              navigatorKey.currentState?.pushReplacementNamed("/home");
-              break;
+              navigatorKey.currentState?.pushReplacementNamed('/home');
           }
         },
       ),
-      body: Center(
-        child: Text("Profiles"),
-      ),
+      body: const Center(child: Text('Profiles')),
     );
   }
 }

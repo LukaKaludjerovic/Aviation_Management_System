@@ -1,9 +1,9 @@
 class Permission {
-  static const appLogin = "AppLogin";
-  static const settingsProfiles = "SettingsProfiles";
-  static const settingsRoles = "SettingsRoles";
+  static const String appLogin = 'AppLogin';
+  static const String settingsProfiles = 'SettingsProfiles';
+  static const String settingsRoles = 'SettingsRoles';
 
-  static const all = [
+  static const List<String> all = <String>[
     appLogin,
     settingsProfiles,
     settingsRoles,

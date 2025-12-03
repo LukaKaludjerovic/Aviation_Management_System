@@ -11,29 +11,33 @@ class Auth {
   String? _userName;
   String? _roleName;
 
-  void setToken(String token) => _token = token;
-  void setPermissions(List<String> permissions) => _permissions = permissions;
-  void setFirstName(String firstName) => _firstName = firstName;
-  void setLastName(String lastName) => _lastName = lastName;
-  void setUserName(String userName) => _userName = userName;
-  void setRoleName(String roleName) => _roleName = roleName;
+  set token(String value) => _token = value;
+  set permissions(List<String> value) => _permissions = value;
+  set firstName(String value) => _firstName = value;
+  set lastName(String value) => _lastName = value;
+  set userName(String value) => _userName = value;
+  set roleName(String value) => _roleName = value;
 
-  String get getFirstName => _firstName ?? "";
-  String get getLastName => _lastName ?? "";
-  String get getUserName => _userName ?? "";
-  String get getRoleName => _roleName ?? "";
+  String get token => _token ?? '';
+  List<String> get permissions => _permissions ?? <String>[];
+  String get firstName => _firstName ?? '';
+  String get lastName => _lastName ?? '';
+  String get userName => _userName ?? '';
+  String get roleName => _roleName ?? '';
 
   bool get isLoggedIn => _token != null && _token!.isNotEmpty;
 
   bool allowed(String permission) {
-    if (_permissions == null || _permissions!.isEmpty) return false;
+    if (_permissions == null || _permissions!.isEmpty) {
+      return false;
+    }
 
     return _permissions!.contains(permission);
   }
 
   Future<void> logout() async {
     try {
-      await Api.instance.post("/api/auth/logout", {}); 
+      await Api.instance.post('/api/auth/logout', <String, dynamic>{}); 
     } 
     catch (e) {
       //

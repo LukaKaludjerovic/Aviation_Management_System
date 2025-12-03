@@ -21,27 +21,29 @@ class _LoginState extends State<Login> {
     setState(() => _loading = true);
 
     try {
-      final response = await Api.instance.post(
-        "/api/auth/login",
-        {
-          "username": _username.text.trim(),
-          "password": _password.text.trim()
+      final Map<String, dynamic> response = await Api.instance.post(
+        '/api/auth/login',
+        <String, dynamic>{
+          'username': _username.text.trim(),
+          'password': _password.text.trim()
         }
-      );
+      ) as Map<String, dynamic>;
 
-      final permissions = response["permissions"];
-      if (permissions is List) {
-        Auth.instance.setPermissions(permissions.map((p) => p.toString()).toList());
-      }
+      final List<dynamic> permissionsJson = response['permissions'] as List<dynamic>;
+      final List<String> permissions = permissionsJson.map((dynamic p) => p.toString()).toList();
+      Auth.instance.permissions = permissions;
 
-      Auth.instance.setToken(response["token"]);
-      Auth.instance.setFirstName(response["user"]["firstName"]);
-      Auth.instance.setLastName(response["user"]["lastName"]);
-      Auth.instance.setUserName(response["user"]["userName"]);
-      Auth.instance.setRoleName(response["user"]["role"]["name"]);
-      Api.instance.setToken(response["token"]);
+      final Map<String, dynamic> user = response['user'] as Map<String, dynamic>;
+      final Map<String, dynamic> role = user['role'] as Map<String, dynamic>;
 
-      navigatorKey.currentState?.pushReplacementNamed("/home");
+      Auth.instance.token = response['token'] as String;
+      Auth.instance.firstName = user['firstName'] as String;
+      Auth.instance.lastName = user['lastName'] as String;
+      Auth.instance.userName = user['userName'] as String;
+      Auth.instance.roleName = role['name'] as String;
+      Api.instance.token = response['token'] as String;
+
+      navigatorKey.currentState?.pushReplacementNamed('/home');
     } 
     catch (e) {
       //
@@ -56,16 +58,15 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: const Header(),
       body: Stack(
-        children: [
-          Align(
+        children: <Widget>[
+          const Align(
             alignment: Alignment.topCenter,
             child: SafeArea(
-              minimum: const EdgeInsets.only(top: 16),
+              minimum: EdgeInsets.only(top: 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
+                children: <Widget>[
                   Text(
-                    "Welcome to AeroSense",
+                    'Welcome to AeroSense',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -73,7 +74,7 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "New generation AMOS application",
+                    'New generation AMOS application',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
@@ -85,7 +86,6 @@ class _LoginState extends State<Login> {
             ),
           ),
       
-      
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
@@ -93,9 +93,9 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     const Text(
-                      "Please log in",
+                      'Please log in',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold
@@ -111,18 +111,15 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.bold,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
+                            borderSide: BorderSide(width: 2)
                           ),
                         )
                       ),
                       child: TextField(
                         controller: _username,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         decoration: const InputDecoration(
-                          labelText: "Username",
+                          labelText: 'Username',
                           labelStyle: TextStyle(
                             color: Colors.black,
                           ),
@@ -144,7 +141,6 @@ class _LoginState extends State<Login> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.black,
                               width: 2,
                             ),
                           ),
@@ -152,48 +148,66 @@ class _LoginState extends State<Login> {
                       ),
                       child: TextField(
                         controller: _password,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),
                         obscureText: true,
                         decoration: const InputDecoration(
-                          labelText: "Password",
-                          labelStyle: TextStyle(color: Colors.black),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            color: Colors.black
+                          ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
+                            borderSide: BorderSide(
+                              color: Colors.grey
+                            ),
                           ),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
                           
-                    const SizedBox(height: 24),
+                    const SizedBox(
+                      height: 24
+                    ),
                           
-                    if (_loading) ...[
-                      CircularProgressIndicator(color: Colors.lightBlue[300])
-                    ] else ...[
+                    if (_loading) ...<Widget>[
+                      CircularProgressIndicator(
+                        color: Colors.lightBlue[300]
+                      )
+                    ] 
+                    else ...<Widget>[
                       ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 250),
+                        constraints: const BoxConstraints(
+                          maxWidth: 250
+                        ),
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _loading ? null : _login,
                             style: ButtonStyle(
-                              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                              backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
                                 if (states.contains(WidgetState.pressed)) {
                                   return Colors.lightBlue[300]!;
-                                } else if (states.contains(WidgetState.disabled)) {
+                                }
+                                else if (states.contains(WidgetState.disabled)) {
                                   return Colors.grey[300]!;
                                 }
                                 return Colors.grey[300]!;
                               }),
                               padding: WidgetStateProperty.all(
-                                const EdgeInsets.symmetric(vertical: 16),
+                                const EdgeInsets.symmetric(
+                                  vertical: 16
+                                ),
                               ),
                               shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)
+                                ),
                               ),
                             ),
                             child: const Text(
-                              "Login",
+                              'Login',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold
@@ -208,11 +222,11 @@ class _LoginState extends State<Login> {
             ),
           ),
 
-          Align(
+          const Align(
             alignment: Alignment.bottomCenter,
             child: SafeArea(
               child: Text(
-                "Having troubles?\nPlease contact support@aerosense.com",
+                'Having troubles?\nPlease contact support@aerosense.com',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black54,

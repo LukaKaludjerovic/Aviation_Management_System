@@ -10,7 +10,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.lightBlue[300],
       centerTitle: true,
       title: const Text(
-        "AeroSense",
+        'AeroSense',
         style: TextStyle(
           fontSize: 36,
           fontWeight: FontWeight.bold,
@@ -20,9 +20,12 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       leading: Auth.instance.isLoggedIn
         ? Builder(
-            builder: (context) => IconButton(
+            builder: (BuildContext context) => IconButton(
               onPressed: () => Scaffold.of(context).openDrawer(), 
-              icon: const Icon(Icons.menu, color: Colors.white)
+              icon: const Icon(
+                Icons.menu, 
+                color: Colors.white
+              )
             )
           )
         : null,
@@ -32,4 +35,3 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(60);
 }
-
