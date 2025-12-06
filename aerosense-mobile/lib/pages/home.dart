@@ -24,8 +24,8 @@ class _HomeState extends State<Home> {
           selected = item;
 
           switch (item) {
-            case MenuItem.settingsProfiles:
-              navigatorKey.currentState?.pushReplacementNamed('/profiles');
+            case MenuItem.settingsUsers:
+              navigatorKey.currentState?.pushReplacementNamed('/users');
 
             case MenuItem.settingsRoles:
               navigatorKey.currentState?.pushReplacementNamed('/roles');

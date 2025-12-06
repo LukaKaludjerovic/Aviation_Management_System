@@ -1,7 +1,7 @@
 import 'package:aerosense/api.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
-import 'package:aerosense/model/permission.dart';
+import 'package:aerosense/pages/settings/roles/editor.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:aerosense/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
@@ -32,202 +32,34 @@ class _RolesState extends State<Roles> {
         .map((dynamic e) => e as Map<String, dynamic>)
         .toList();
     });
-
-    setState(() {
-      _roles = List<Map<String, dynamic>>.from(response as Iterable<dynamic>);
-    });
   }
 
   void _openRoleDialog(Map<String, dynamic> role) {
-    final TextEditingController name = TextEditingController(text: (role['name'] ?? '') as String);
-
-    final List<String> selectedFunctions = (role['allowedFunctions'] ?? '')
-      .toString()
-      .split(',')
-      .map((String f) => f.trim())
-      .where((String f) => f.isNotEmpty)
-      .toList();
-
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: role['id'] == 0 
-                ? const Text('New role') 
-                : const Text('Edit role'),
-              content: SizedBox(
-                width: 400,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        inputDecorationTheme: const InputDecorationTheme(
-                          floatingLabelStyle: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                            ),
-                          ),
-                        )
-                      ),
-                      child: TextField(
-                        autofocus: true,
-                        controller: name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Role Name',
-                          labelStyle: TextStyle(
-                            color: Colors.black,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey
-                            ),
-                          ),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16
-                    ),
-
-                    const Text(
-                      'Allowed Functions',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: Scrollbar(
-                        child: ListView(
-                          children: Permission.all.map((String func) {
-                            return CheckboxListTile(
-                              title: Text(func),
-                              value: selectedFunctions.contains(func),
-                              fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return Colors.black;
-                                }
-                                return Colors.transparent;
-                              }),
-                              onChanged: (bool? checked) {
-                                setState(() {
-                                  if (checked ?? false) {
-                                    selectedFunctions.add(func);
-                                  } 
-                                  else {
-                                    selectedFunctions.remove(func);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              actions: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    if (role['id'] != 0) Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            TextButton(
-                              onPressed: () async {
-                                await Api.instance.delete("/api/role/${role["id"]}");
-
-                                _fetchRoles();
-
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                Navigator.pop(context);
-                              }, 
-                              child: const Text(
-                                'Delete',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, 
-                                  color: Colors.black
-                                ),
-                              )
-                            ),
-                          ],
-                        ) 
-                        else const Row(),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold, 
-                              color: Colors.black
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            if (role['id'] == 0) {
-                              final Map<String, String> newRole = <String, String>{
-                                'name': name.text.trim(),
-                                'allowedFunctions': selectedFunctions.join(','),
-                              };
-
-                              await Api.instance.post('/api/role', newRole);
-                            }
-                            else {
-                              final Map<String, dynamic> updatedRole = <String, dynamic>{
-                                'id': role['id'],
-                                'name': name.text.trim(),
-                                'allowedFunctions': selectedFunctions.join(','),
-                              };
-
-                              await Api.instance.put('/api/role', updatedRole);
-                            }
-                            
-                            _fetchRoles();
-
-                            if (!context.mounted) {
-                              return;
-                            }
-                            Navigator.pop(context);
-                          }, 
-                          child: const Text(
-                            'Save',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold, 
-                              color: Colors.black
-                            ),
-                          )
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ],
-            );
+        return Editor(
+          role: role,
+          onSave: (Map<String, dynamic> updatedRole) async {
+            if (role['id'] == 0) {
+              await Api.instance.post('/api/role', {
+                'name': updatedRole['name'],
+                'allowedFunctions': updatedRole['allowedFunctions'],
+              });
+            }
+            else {
+              await Api.instance.put('/api/role', updatedRole);
+            }
+            await _fetchRoles();
           },
+          onDelete: () async {
+            if (role['id'] != 0) {
+              await Api.instance.delete("/api/role/${role["id"]}");
+              await _fetchRoles();
+            }
+          }
         );
-      },
+      }
     );
   }
   
@@ -241,8 +73,8 @@ class _RolesState extends State<Roles> {
           selected = item;
 
           switch (item) {
-            case MenuItem.settingsProfiles:
-              navigatorKey.currentState?.pushReplacementNamed('/profiles');
+            case MenuItem.settingsUsers:
+              navigatorKey.currentState?.pushReplacementNamed('/users');
 
             case MenuItem.settingsRoles:
               navigatorKey.currentState?.pushReplacementNamed('/roles');
@@ -317,8 +149,7 @@ class _RolesState extends State<Roles> {
                             )),
                           ], 
                           rows: _roles.map((Map<String, dynamic> role) {
-                            final String allowedFunctions = 
-                              role['allowedFunctions']
+                            final String allowedFunctions = (role['allowedFunctions'] ?? '')
                               .toString()
                               .replaceAll(',', ', ');
                             

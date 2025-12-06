@@ -43,6 +43,11 @@ public class UserController : ControllerBase
 
         user.Password = EncryptUtils.HashPassword(user.Password);
 
+        if (user.Role != null)
+        {
+            ctx.Attach(user.Role);
+        }
+
         ctx.Users.Add(user);
         ctx.SaveChanges();
 
@@ -56,12 +61,25 @@ public class UserController : ControllerBase
     {
         var ctx = new AerosenseContext();
 
-        ctx.Users.Update(user);
+        var dbUser = ctx.Users.FirstOrDefault(u => u.Id == user.Id);
+
+        if (dbUser == null)
+        {
+            return NotFound("User not found".ToResponseError());
+        }
+
+        dbUser.FirstName = user.FirstName;
+        dbUser.LastName = user.LastName;
+        dbUser.UserName = user.UserName;
+        dbUser.Role = user.Role;
+        dbUser.AllowedFunctions = user.AllowedFunctions;
+        dbUser.ForbiddenFunctions = user.ForbiddenFunctions;
+
         ctx.SaveChanges();
 
-        user.Password = null;
+        dbUser.Password = null;
 
-        return Ok(user);
+        return Ok(dbUser);
     }
 
     [HttpDelete]

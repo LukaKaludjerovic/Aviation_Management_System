@@ -26,6 +26,7 @@ public class AuthController : ControllerBase
 
         var user = ctx.Users
             .Include(u => u.Role)
+            .Where(u => u.DeletedTimestamp == null)
             .FirstOrDefault(u => u.UserName == username);
 
         if (user == null || user.UserName == null || user.Password == null)

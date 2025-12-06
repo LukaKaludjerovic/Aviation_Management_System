@@ -1,7 +1,7 @@
 import 'package:aerosense/pages/home.dart';
 import 'package:aerosense/pages/login.dart';
-import 'package:aerosense/pages/settings/profiles.dart';
 import 'package:aerosense/pages/settings/roles.dart';
+import 'package:aerosense/pages/settings/users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -32,7 +32,7 @@ class MainApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const Login(),
         '/home': (BuildContext context) => const Home(),
-        '/profiles': (BuildContext context) => const Profiles(),
+        '/users': (BuildContext context) => const Users(),
         '/roles': (BuildContext context) => const Roles()
       },
     );

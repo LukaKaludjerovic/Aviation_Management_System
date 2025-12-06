@@ -60,7 +60,7 @@ class SideMenu extends StatelessWidget {
               },
             ),
 
-            if (Auth.instance.allowed(Permission.settingsProfiles) || Auth.instance.allowed(Permission.settingsRoles)) ...<Widget>[
+            if (Auth.instance.allowed(Permission.settingsUsers) || Auth.instance.allowed(Permission.settingsRoles)) ...<Widget>[
               Theme(
                 data: Theme.of(context).copyWith(
                   dividerColor: Colors.transparent,
@@ -73,12 +73,12 @@ class SideMenu extends StatelessWidget {
                   ),
                 ),
                 child: ExpansionTile(
-                  initiallyExpanded: selected == MenuItem.settingsProfiles || selected == MenuItem.settingsRoles,
+                  initiallyExpanded: selected == MenuItem.settingsUsers || selected == MenuItem.settingsRoles,
                   leading: const Icon(Icons.settings),
                   title: Text(
                     'Settings',
                     style: TextStyle(
-                      fontWeight: selected == MenuItem.settingsProfiles || selected == MenuItem.settingsRoles
+                      fontWeight: selected == MenuItem.settingsUsers || selected == MenuItem.settingsRoles
                         ? FontWeight.bold
                         : FontWeight.normal
                     ),
@@ -88,22 +88,22 @@ class SideMenu extends StatelessWidget {
                     right: 40
                   ),
                   children: <Widget>[
-                    if (Auth.instance.allowed(Permission.settingsProfiles))
+                    if (Auth.instance.allowed(Permission.settingsUsers))
                       ListTile(
                         leading: const Icon(Icons.manage_accounts),
                         title: Text(
-                          'Profiles',
+                          'Users',
                           style: TextStyle(
-                            fontWeight: selected == MenuItem.settingsProfiles
+                            fontWeight: selected == MenuItem.settingsUsers
                               ? FontWeight.bold
                               : FontWeight.normal
                           ),
                         ),
-                        selected: selected == MenuItem.settingsProfiles,
+                        selected: selected == MenuItem.settingsUsers,
                         selectedColor: Colors.black,
                         onTap: () {
                           Navigator.pop(context);
-                          onSelect(MenuItem.settingsProfiles);
+                          onSelect(MenuItem.settingsUsers);
                         }
                       ),
                     if (Auth.instance.allowed(Permission.settingsRoles))
