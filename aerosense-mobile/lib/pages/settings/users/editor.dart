@@ -31,6 +31,11 @@ class _EditorState extends State<Editor> {
   final ScrollController _allowedController = ScrollController();
   final ScrollController _forbiddenController = ScrollController();
 
+  bool _firstNameError = false;
+  bool _lastNameError = false;
+  bool _userNameError = false;
+  bool _passwordError = false;
+
   @override
   void initState() {
     super.initState();
@@ -113,18 +118,24 @@ class _EditorState extends State<Editor> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'First name',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black,
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.grey
                     ),
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _firstNameError ? 'First name is required' : null
                 ),
+                onChanged: (String value) {
+                  setState(() {
+                    _firstNameError = value.trim().isEmpty;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -149,18 +160,24 @@ class _EditorState extends State<Editor> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Last name',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black,
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.grey
                     ),
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _lastNameError ? 'Last name is required' : null
                 ),
+                onChanged: (String value) {
+                  setState(() {
+                    _lastNameError = value.trim().isEmpty;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -185,18 +202,24 @@ class _EditorState extends State<Editor> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Username',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black,
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.grey
                     ),
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _userNameError ? 'Username is required' : null
                 ),
+                onChanged: (String value) {
+                  setState(() {
+                    _userNameError = value.trim().isEmpty;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -223,18 +246,24 @@ class _EditorState extends State<Editor> {
                     fontWeight: FontWeight.bold
                   ),
                   obscureText: true,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                       color: Colors.black,
                     ),
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.grey
                       ),
                     ),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    errorText: _passwordError ? 'Password is required' : null
                   ),
+                  onChanged: (String value) {
+                    setState(() {
+                      _passwordError = value.trim().isEmpty;
+                    });
+                  },
                 ),
               ),
               const SizedBox(height: 16),
@@ -417,6 +446,17 @@ class _EditorState extends State<Editor> {
                 ),
                 TextButton(
                   onPressed: () async {
+                    setState(() {
+                      _firstNameError = _firstName.text.trim().isEmpty;
+                      _lastNameError = _lastName.text.trim().isEmpty;
+                      _userNameError = _userName.text.trim().isEmpty;
+                      _passwordError = _password.text.trim().isEmpty && widget.user['id'] == 0;
+                    });
+
+                    if (_firstNameError || _lastNameError || _userNameError || _passwordError) {
+                      return;
+                    }
+
                     final Map<String, dynamic> updated = <String, dynamic>{
                       'id': widget.user['id'],
                       'firstName': _firstName.text.trim(),

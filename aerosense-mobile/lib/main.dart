@@ -1,5 +1,8 @@
+import 'package:aerosense/pages/aircraft/aircraft.dart';
 import 'package:aerosense/pages/home.dart';
 import 'package:aerosense/pages/login.dart';
+import 'package:aerosense/pages/maintenance/maintenance.dart';
+import 'package:aerosense/pages/routes/routes.dart';
 import 'package:aerosense/pages/settings/roles.dart';
 import 'package:aerosense/pages/settings/users.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +36,10 @@ class MainApp extends StatelessWidget {
         '/login': (BuildContext context) => const Login(),
         '/home': (BuildContext context) => const Home(),
         '/users': (BuildContext context) => const Users(),
-        '/roles': (BuildContext context) => const Roles()
+        '/roles': (BuildContext context) => const Roles(),
+        '/aircraft': (BuildContext context) => const Aircraft(),
+        '/routes': (BuildContext context) => const Routes(),
+        '/maintenance': (BuildContext context) => const Maintenance()
       },
     );
   }

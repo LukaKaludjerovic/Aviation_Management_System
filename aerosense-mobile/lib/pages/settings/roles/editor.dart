@@ -21,6 +21,8 @@ class _EditorState extends State<Editor> {
   late TextEditingController _name;
   late List<String> _selectedFunctions;
 
+  bool _nameError = false;
+
   @override
   void initState() {
     super.initState();
@@ -80,18 +82,24 @@ class _EditorState extends State<Editor> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Role Name',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black,
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.grey
                     ),
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _nameError ? 'Name is required' : null
                 ),
+                onChanged: (String value) {
+                  setState(() {
+                    _nameError = value.trim().isEmpty;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -100,7 +108,7 @@ class _EditorState extends State<Editor> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(
-              height: 150,
+              height: 300,
               child: Scrollbar(
                 thumbVisibility: true,
                 child: ListView(
@@ -172,6 +180,14 @@ class _EditorState extends State<Editor> {
                 ),
                 TextButton(
                   onPressed: () async {
+                    setState(() {
+                      _nameError = _name.text.trim().isEmpty;
+                    });
+
+                    if (_nameError) {
+                      return;
+                    }
+
                     final Map<String, dynamic> updated = <String, dynamic>{
                       'id': widget.role['id'],
                       'name': _name.text.trim(),

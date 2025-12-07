@@ -17,8 +17,19 @@ class _LoginState extends State<Login> {
   final TextEditingController _password = TextEditingController();
 
   bool _loading = false;
+  bool _usernameError = false;
+  bool _passwordError = false;
 
   Future<void> _login() async {
+    setState(() {
+      _usernameError = _username.text.trim().isEmpty;
+      _passwordError = _password.text.trim().isEmpty;
+    });
+
+    if (_usernameError || _passwordError) {
+      return;
+    }
+
     setState(() => _loading = true);
 
     try {
@@ -120,16 +131,22 @@ class _LoginState extends State<Login> {
                       child: TextField(
                         controller: _username,
                         style: const TextStyle(fontWeight: FontWeight.bold),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Username',
-                          labelStyle: TextStyle(
+                          labelStyle: const TextStyle(
                             color: Colors.black,
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
                           ),
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
+                          errorText: _usernameError ? 'Username is required' : null
                         ),
+                        onChanged: (String value) {
+                          setState(() {
+                            _usernameError = value.trim().isEmpty;
+                          });
+                        },
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -154,18 +171,24 @@ class _LoginState extends State<Login> {
                           fontWeight: FontWeight.bold
                         ),
                         obscureText: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Password',
-                          labelStyle: TextStyle(
+                          labelStyle: const TextStyle(
                             color: Colors.black
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey
                             ),
                           ),
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
+                          errorText: _passwordError ? 'Password is required' : null
                         ),
+                        onChanged: (String value) {
+                          setState(() {
+                            _passwordError = value.trim().isEmpty;
+                          });
+                        },
                       ),
                     ),
                           

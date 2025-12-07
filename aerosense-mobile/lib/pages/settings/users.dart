@@ -1,6 +1,8 @@
 import 'package:aerosense/api.dart';
+import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
+import 'package:aerosense/model/permission.dart';
 import 'package:aerosense/pages/settings/users/editor.dart';
 import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
@@ -101,6 +103,15 @@ class _UsersState extends State<Users> {
 
             case MenuItem.home:
               navigatorKey.currentState?.pushReplacementNamed('/home');
+
+            case MenuItem.aircraft:
+              navigatorKey.currentState?.pushReplacementNamed('/aircraft');
+            
+            case MenuItem.routes:
+              navigatorKey.currentState?.pushReplacementNamed('/routes');
+            
+            case MenuItem.maintenance:
+              navigatorKey.currentState?.pushReplacementNamed('/maintenance');
           }
         },
       ),
@@ -126,13 +137,14 @@ class _UsersState extends State<Users> {
                         ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          _openUserDialog(<String, dynamic>{'id': 0});
-                        }, 
-                        icon: const Icon(Icons.add_circle),
-                        iconSize: 32,
-                      )
+                      if (Auth.instance.allowed(Permission.settingsModifyUsers))
+                        IconButton(
+                          onPressed: () {
+                            _openUserDialog(<String, dynamic>{'id': 0});
+                          }, 
+                          icon: const Icon(Icons.add_circle),
+                          iconSize: 32,
+                        )
                     ],
                   ),
                 ),
@@ -152,86 +164,152 @@ class _UsersState extends State<Users> {
                         dataRowMaxHeight: double.infinity,
                         columns: const <DataColumn>[
                           DataColumn(
-                            label: Text(
-                              'Name',
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
+                            label: SizedBox(
+                              width: 100,
+                              child: Center(
+                                child: Text(
+                                  'Name',
+                                  style: TextStyle(
+                                    fontSize: 18, 
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
                               ),
                             )
                           ),
                           DataColumn(
-                            label: Text(
-                              'Role',
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
+                            label: SizedBox(
+                              width: 100,
+                              child: Center(
+                                child: Text(
+                                  'Role',
+                                  style: TextStyle(
+                                    fontSize: 18, 
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
                               ),
                             )
                           ),
-                          DataColumn(label: Text(
-                            'Allowed Functions',
-                            style: TextStyle(
-                              fontSize: 18, 
-                              fontWeight: FontWeight.bold
+                          DataColumn(
+                            label: SizedBox(
+                              width: 150,
+                              child: Center(
+                                child: Text(
+                                  'Allowed Functions',
+                                  style: TextStyle(
+                                    fontSize: 18, 
+                                    fontWeight: FontWeight.bold
+                                  )
+                                ),
+                              ),
                             )
-                          )),
-                          DataColumn(label: Text(
-                            'Forbidden Functions',
-                            style: TextStyle(
-                              fontSize: 18, 
-                              fontWeight: FontWeight.bold
+                          ),
+                          DataColumn(
+                            label: SizedBox(
+                              width: 150,
+                              child: Center(
+                                child: Text(
+                                  'Forbidden Functions',
+                                  style: TextStyle(
+                                    fontSize: 18, 
+                                    fontWeight: FontWeight.bold
+                                  )
+                                ),
+                              ),
                             )
-                          )),
+                          ),
                         ], 
                         rows: _users.map((Map<String, dynamic> user) {
-                          final String allowedFunctions = (user['allowedFunctions'] ?? '')
+                          final List<String> allowedFunctions = (user['allowedFunctions'] ?? '')
                             .toString()
-                            .replaceAll(',', ', ');
+                            .split(',')
+                            .toList();
                           
-                          final String forbiddenFunctions = (user['forbiddenFunctions'] ?? '')
+                          final List<String> forbiddenFunctions = (user['forbiddenFunctions'] ?? '')
                             .toString()
-                            .replaceAll(',', ', ');
+                            .split(',')
+                            .toList();
                           
                           return DataRow(
                             cells: <DataCell>[
                               DataCell(
-                                Text(
-                                  '${user['firstName']} ${user['lastName']}',
-                                  style: const TextStyle(fontSize: 16),
+                                SizedBox(
+                                  width: 100,
+                                  child: Center(
+                                    child: Text(
+                                      '${user['firstName']} ${user['lastName']}',
+                                      softWrap: true,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ),
-                                onTap: () => _openUserDialog(user)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyUsers)) {
+                                    _openUserDialog(user);
+                                  }
+                                }
                               ),
                               DataCell(
-                                Text(
-                                  (user['role'] as Map<String, dynamic>)['name'].toString(),
-                                  style: const TextStyle(fontSize: 16),
+                                SizedBox(
+                                  width: 100,
+                                  child: Center(
+                                    child: Text(
+                                      (user['role'] as Map<String, dynamic>)['name'].toString(),
+                                      softWrap: true,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ),
-                                onTap: () => _openUserDialog(user)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyUsers)) {
+                                    _openUserDialog(user);
+                                  }
+                                }
                               ),
                               DataCell(
                                 SizedBox(
                                   width: 150,
-                                  child: Text(
-                                    allowedFunctions,
-                                    softWrap: true,
-                                    overflow: TextOverflow.visible,
-                                    style: const TextStyle(fontSize: 16),
+                                  child: Center(
+                                    child: Column(
+                                      children: allowedFunctions.map((String func) =>
+                                        Text(
+                                          func, 
+                                          softWrap: true,
+                                          overflow: TextOverflow.visible,
+                                          style: const TextStyle(fontSize: 16),
+                                        )
+                                      ).toList()
+                                    ),
                                   ),
                                 ),
-                                onTap: () => _openUserDialog(user)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyUsers)) {
+                                    _openUserDialog(user);
+                                  }
+                                }
                               ),
                               DataCell(
                                 SizedBox(
                                   width: 150,
-                                  child: Text(
-                                    forbiddenFunctions,
-                                    softWrap: true,
-                                    overflow: TextOverflow.visible,
-                                    style: const TextStyle(fontSize: 16),
+                                  child: Center(
+                                    child: Column(
+                                      children: forbiddenFunctions.map((String func) =>
+                                        Text(
+                                          func,
+                                          softWrap: true,
+                                          overflow: TextOverflow.visible,
+                                          style: const TextStyle(fontSize: 16),
+                                        )
+                                      ).toList()
+                                    ),
                                   ),
                                 ),
-                                onTap: () => _openUserDialog(user)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyUsers)) {
+                                    _openUserDialog(user);
+                                  }
+                                }
                               ),
                             ]
                           );

@@ -60,7 +60,62 @@ class SideMenu extends StatelessWidget {
               },
             ),
 
-            if (Auth.instance.allowed(Permission.settingsUsers) || Auth.instance.allowed(Permission.settingsRoles)) ...<Widget>[
+            if (Auth.instance.allowed(Permission.aircraft))
+              ListTile(
+                leading: const Icon(Icons.flight),
+                title: Text(
+                  'Aircraft',
+                  style: TextStyle(
+                    fontWeight: selected == MenuItem.aircraft 
+                    ? FontWeight.bold 
+                    : FontWeight.normal
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  onSelect(MenuItem.aircraft);
+                },
+              ),
+
+            if (Auth.instance.allowed(Permission.routes))
+              ListTile(
+                leading: const Icon(Icons.route),
+                title: Text(
+                  'Routes',
+                  style: TextStyle(
+                    fontWeight: selected == MenuItem.routes 
+                    ? FontWeight.bold 
+                    : FontWeight.normal
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  onSelect(MenuItem.routes);
+                },
+              ),
+
+            if (Auth.instance.allowed(Permission.maintenance))
+              ListTile(
+                leading: const Icon(Icons.build),
+                title: Text(
+                  'Maintenance',
+                  style: TextStyle(
+                    fontWeight: selected == MenuItem.maintenance 
+                    ? FontWeight.bold 
+                    : FontWeight.normal
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  onSelect(MenuItem.maintenance);
+                },
+              ),
+
+            if (Auth.instance.allowed(Permission.settingsUsers) ||
+                (Auth.instance.allowed(Permission.settingsUsers) && Auth.instance.allowed(Permission.settingsModifyUsers)) ||
+                Auth.instance.allowed(Permission.settingsRoles) ||
+                (Auth.instance.allowed(Permission.settingsRoles) && Auth.instance.allowed(Permission.settingsModifyRoles))
+            ) ...<Widget>[
               Theme(
                 data: Theme.of(context).copyWith(
                   dividerColor: Colors.transparent,

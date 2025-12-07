@@ -1,6 +1,8 @@
 import 'package:aerosense/api.dart';
+import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
+import 'package:aerosense/model/permission.dart';
 import 'package:aerosense/pages/settings/roles/editor.dart';
 import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
@@ -83,6 +85,15 @@ class _RolesState extends State<Roles> {
 
             case MenuItem.home:
               navigatorKey.currentState?.pushReplacementNamed('/home');
+            
+            case MenuItem.aircraft:
+              navigatorKey.currentState?.pushReplacementNamed('/aircraft');
+            
+            case MenuItem.routes:
+              navigatorKey.currentState?.pushReplacementNamed('/routes');
+            
+            case MenuItem.maintenance:
+              navigatorKey.currentState?.pushReplacementNamed('/maintenance');
           }
         },
       ),
@@ -108,13 +119,14 @@ class _RolesState extends State<Roles> {
                         ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          _openRoleDialog(<String, dynamic>{'id': 0});
-                        }, 
-                        icon: const Icon(Icons.add_circle),
-                        iconSize: 32,
-                      )
+                      if (Auth.instance.allowed(Permission.settingsModifyRoles))
+                        IconButton(
+                          onPressed: () {
+                            _openRoleDialog(<String, dynamic>{'id': 0});
+                          }, 
+                          icon: const Icon(Icons.add_circle),
+                          iconSize: 32,
+                        )
                     ],
                   ),
                 ),
@@ -134,47 +146,80 @@ class _RolesState extends State<Roles> {
                         dataRowMaxHeight: double.infinity,
                         columns: const <DataColumn>[
                           DataColumn(
-                            label: Text(
-                              'Name',
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
+                            label: SizedBox(
+                              width: 100,
+                              child: Center(
+                                child: Text(
+                                  'Name',
+                                  style: TextStyle(
+                                    fontSize: 18, 
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
                               ),
                             )
                           ),
-                          DataColumn(label: Text(
-                            'Allowed Functions',
-                            style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
-                              )
-                          )),
+                          DataColumn(
+                            label: SizedBox(
+                              width: 300,
+                              child: Center(
+                                child: Text(
+                                  'Allowed Functions',
+                                  style: TextStyle(
+                                      fontSize: 18, 
+                                      fontWeight: FontWeight.bold
+                                    )
+                                ),
+                              ),
+                            )
+                          ),
                         ], 
                         rows: _roles.map((Map<String, dynamic> role) {
-                          final String allowedFunctions = (role['allowedFunctions'] ?? '')
+                          final List<String> allowedFunctions = (role['allowedFunctions'] ?? '')
                             .toString()
-                            .replaceAll(',', ', ');
+                            .split(',')
+                            .toList();
                           
                           return DataRow(
                             cells: <DataCell>[
                               DataCell(
-                                Text(
-                                  role['name'].toString(),
-                                  style: const TextStyle(fontSize: 16),
+                                SizedBox(
+                                  width: 100,
+                                  child: Center(
+                                    child: Text(
+                                      role['name'].toString(),
+                                      softWrap: true,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ),
-                                onTap: () => _openRoleDialog(role)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyRoles)) {
+                                    _openRoleDialog(role);
+                                  }
+                                }
                               ),
                               DataCell(
                                 SizedBox(
                                   width: 300,
-                                  child: Text(
-                                    allowedFunctions,
-                                    softWrap: true,
-                                    overflow: TextOverflow.visible,
-                                    style: const TextStyle(fontSize: 16),
+                                  child: Center(
+                                    child: Column(
+                                      children: allowedFunctions.map((String func) => 
+                                        Text(
+                                          func, 
+                                          softWrap: true, 
+                                          overflow: TextOverflow.visible, 
+                                          style: const TextStyle(fontSize: 16),
+                                        )
+                                      ).toList()
+                                    ),
                                   ),
                                 ),
-                                onTap: () => _openRoleDialog(role)
+                                onTap: () { 
+                                  if (Auth.instance.allowed(Permission.settingsModifyRoles)) {
+                                    _openRoleDialog(role);
+                                  }
+                                }
                               ),
                             ]
                           );

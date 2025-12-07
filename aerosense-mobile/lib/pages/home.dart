@@ -122,6 +122,15 @@ class _HomeState extends State<Home> {
 
             case MenuItem.home:
               navigatorKey.currentState?.pushReplacementNamed('/home');
+
+            case MenuItem.aircraft:
+              navigatorKey.currentState?.pushReplacementNamed('/aircraft');
+            
+            case MenuItem.routes:
+              navigatorKey.currentState?.pushReplacementNamed('/routes');
+            
+            case MenuItem.maintenance:
+              navigatorKey.currentState?.pushReplacementNamed('/maintenance');
           }
         },
       ),
