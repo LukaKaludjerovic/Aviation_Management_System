@@ -1,5 +1,6 @@
 namespace aerosense.controllers;
 
+using aerosense.authorization;
 using aerosense.extensions;
 using aerosense.models.aerosense;
 using aerosense.models.context;
@@ -40,6 +41,13 @@ public class UserController : ControllerBase
         }
 
         var ctx = new AerosenseContext();
+
+        var existingUser = ctx.Users.FirstOrDefault(u => u.UserName == user.UserName);
+
+        if (existingUser != null)
+        {
+            return BadRequest("User with same username already exists".ToResponseError());
+        }
 
         user.Password = EncryptUtils.HashPassword(user.Password);
 
@@ -82,6 +90,36 @@ public class UserController : ControllerBase
         return Ok(dbUser);
     }
 
+    [HttpPut]
+    [Route("change-password")]
+    public IActionResult ChangePassword(Auth auth, [FromBody] ChangePasswordRequest changePasswordRequest)
+    {
+        if (changePasswordRequest.OldPassword == null || changePasswordRequest.NewPassword == null)
+        {
+            return BadRequest("Old password is not correct".ToResponseError());
+        }
+
+        var ctx = new AerosenseContext();
+
+        var user = ctx.Users.FirstOrDefault(u => u.Id == auth.User.Id);
+
+        if (user == null || string.IsNullOrWhiteSpace(user.Password))
+        {
+            return NotFound("User not found".ToResponseError());
+        }
+
+        if (!EncryptUtils.VerifyPassword(changePasswordRequest.OldPassword, user.Password))
+        {
+            return BadRequest("Old password is not correct".ToResponseError());
+        }
+
+        user.Password = EncryptUtils.HashPassword(changePasswordRequest.NewPassword);
+
+        ctx.SaveChanges();
+
+        return Ok();
+    }
+
     [HttpDelete]
     [Route("{userId}")]
     public IActionResult Delete(int userId)
@@ -100,5 +138,12 @@ public class UserController : ControllerBase
         ctx.SaveChanges();
 
         return Ok();
+    }
+
+    public class ChangePasswordRequest
+    {
+        public string? OldPassword { get; set; }
+
+        public string? NewPassword { get; set; }
     }
 }

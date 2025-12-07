@@ -1,6 +1,7 @@
 import 'package:aerosense/api.dart';
 import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
+import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:flutter/material.dart';
 
@@ -57,6 +58,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const Header(),
+      bottomNavigationBar: const Footer(),
       body: Stack(
         children: <Widget>[
           const Align(
@@ -221,20 +223,6 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-
-          const Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Text(
-                'Having troubles?\nPlease contact support@aerosense.com',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          )
         ],
       ),
     );

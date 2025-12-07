@@ -2,6 +2,7 @@ import 'package:aerosense/api.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
 import 'package:aerosense/pages/settings/users/editor.dart';
+import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:aerosense/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _UsersState extends State<Users> {
           roles: _roles,
           onSave: (Map<String, dynamic> updatedUser) async {
             if (user['id'] == 0) {
-              await Api.instance.post('/api/user', {
+              await Api.instance.post('/api/user', <String, dynamic>{
                 'firstName': updatedUser['firstName'],
                 'lastName': updatedUser['lastName'],
                 'userName': updatedUser['userName'],
@@ -85,6 +86,7 @@ class _UsersState extends State<Users> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const Header(),
+      bottomNavigationBar: const Footer(),
       drawer: SideMenu(
         selected: selected,
         onSelect: (String item) {
@@ -105,143 +107,143 @@ class _UsersState extends State<Users> {
       body: _users.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Spacer(),
-                        const Text(
-                          'Users',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: () {
-                            _openUserDialog(<String, dynamic>{'id': 0});
-                          }, 
-                          icon: const Icon(Icons.add_circle),
-                          iconSize: 32,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-        
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 500
-                        ),
-                        child: DataTable(
-                          columnSpacing: 60,
-                          dataRowMaxHeight: double.infinity,
-                          columns: const <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                'Name',
-                                style: TextStyle(
-                                  fontSize: 18, 
-                                  fontWeight: FontWeight.bold
-                                ),
-                              )
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Role',
-                                style: TextStyle(
-                                  fontSize: 18, 
-                                  fontWeight: FontWeight.bold
-                                ),
-                              )
-                            ),
-                            DataColumn(label: Text(
-                              'Allowed Functions',
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
-                              )
-                            )),
-                            DataColumn(label: Text(
-                              'Forbidden Functions',
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold
-                              )
-                            )),
-                          ], 
-                          rows: _users.map((Map<String, dynamic> user) {
-                            final String allowedFunctions = (user['allowedFunctions'] ?? '')
-                              .toString()
-                              .replaceAll(',', ', ');
-                            
-                            final String forbiddenFunctions = (user['forbiddenFunctions'] ?? '')
-                              .toString()
-                              .replaceAll(',', ', ');
-                            
-                            return DataRow(
-                              cells: <DataCell>[
-                                DataCell(
-                                  Text(
-                                    '${user['firstName']} ${user['lastName']}',
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  onTap: () => _openUserDialog(user)
-                                ),
-                                DataCell(
-                                  Text(
-                                    user['role']['name'].toString(),
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  onTap: () => _openUserDialog(user)
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    width: 150,
-                                    child: Text(
-                                      allowedFunctions,
-                                      softWrap: true,
-                                      overflow: TextOverflow.visible,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  onTap: () => _openUserDialog(user)
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    width: 150,
-                                    child: Text(
-                                      forbiddenFunctions,
-                                      softWrap: true,
-                                      overflow: TextOverflow.visible,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  onTap: () => _openUserDialog(user)
-                                ),
-                              ]
-                            );
-                          }).toList()
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      const Spacer(),
+                      const Text(
+                        'Users',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          _openUserDialog(<String, dynamic>{'id': 0});
+                        }, 
+                        icon: const Icon(Icons.add_circle),
+                        iconSize: 32,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+                  
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 500
+                      ),
+                      child: DataTable(
+                        columnSpacing: 60,
+                        dataRowMaxHeight: double.infinity,
+                        columns: const <DataColumn>[
+                          DataColumn(
+                            label: Text(
+                              'Name',
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.bold
+                              ),
+                            )
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Role',
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.bold
+                              ),
+                            )
+                          ),
+                          DataColumn(label: Text(
+                            'Allowed Functions',
+                            style: TextStyle(
+                              fontSize: 18, 
+                              fontWeight: FontWeight.bold
+                            )
+                          )),
+                          DataColumn(label: Text(
+                            'Forbidden Functions',
+                            style: TextStyle(
+                              fontSize: 18, 
+                              fontWeight: FontWeight.bold
+                            )
+                          )),
+                        ], 
+                        rows: _users.map((Map<String, dynamic> user) {
+                          final String allowedFunctions = (user['allowedFunctions'] ?? '')
+                            .toString()
+                            .replaceAll(',', ', ');
+                          
+                          final String forbiddenFunctions = (user['forbiddenFunctions'] ?? '')
+                            .toString()
+                            .replaceAll(',', ', ');
+                          
+                          return DataRow(
+                            cells: <DataCell>[
+                              DataCell(
+                                Text(
+                                  '${user['firstName']} ${user['lastName']}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                onTap: () => _openUserDialog(user)
+                              ),
+                              DataCell(
+                                Text(
+                                  (user['role'] as Map<String, dynamic>)['name'].toString(),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                onTap: () => _openUserDialog(user)
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 150,
+                                  child: Text(
+                                    allowedFunctions,
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                onTap: () => _openUserDialog(user)
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 150,
+                                  child: Text(
+                                    forbiddenFunctions,
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                onTap: () => _openUserDialog(user)
+                              ),
+                            ]
+                          );
+                        }).toList()
+                      ),
                     ),
-                  ],
-                )
-              ],
-            )
+                  ),
+                ],
+              )
+            ],
           )
+        )
     );
   }
 }
