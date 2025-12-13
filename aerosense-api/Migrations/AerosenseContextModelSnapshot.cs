@@ -22,6 +22,42 @@ namespace aerosense.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("aerosense.models.aerosense.Aircraft", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Configuration")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EISDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("FirstFlight")
+                        .HasColumnType("date");
+
+                    b.Property<int>("MSN")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Registration")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("WFSDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("Aircraft");
+                });
+
             modelBuilder.Entity("aerosense.models.aerosense.AircraftType", b =>
                 {
                     b.Property<int>("Id")
@@ -38,6 +74,9 @@ namespace aerosense.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Range")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("WFSDate")
                         .HasColumnType("date");
@@ -137,6 +176,15 @@ namespace aerosense.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("aerosense.models.aerosense.Aircraft", b =>
+                {
+                    b.HasOne("aerosense.models.aerosense.AircraftType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId");
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("aerosense.models.aerosense.User", b =>

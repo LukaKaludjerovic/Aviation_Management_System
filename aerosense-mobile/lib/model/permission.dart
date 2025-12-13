@@ -4,9 +4,16 @@ class Permission {
   static const String settingsModifyUsers = 'SettingsModifyUsers';
   static const String settingsRoles = 'SettingsRoles';
   static const String settingsModifyRoles = 'SettingsModifyRoles';
-  static const String aircraft = 'Aircraft';
-  static const String routes = 'Routes';
-  static const String maintenance = 'Maintenance';
+  static const String settingsAircraftTypes = 'SettingsAircraftTypes';
+  static const String settingsModifyAircraftTypes = 'SettingsModifyAircraftTypes';
+  static const String settingsAirports = 'SettingsAirports';
+  static const String settingsModifyAirports = 'SettingsModifyAirports';
+  static const String activeAircraft = 'ActiveAircraft';
+  static const String historicAircraft = 'HistoricAircraft';
+  static const String currentRoutes = 'CurrentRoutes';
+  static const String historicRoutes = 'HistoricRoutes';
+  static const String pendingMaintenance = 'PendingMaintenance';
+  static const String historicMaintenance = 'HistoricMaintenance';
 
   static const List<String> all = <String>[
     appLogin,
@@ -14,8 +21,15 @@ class Permission {
     settingsModifyUsers,
     settingsRoles,
     settingsModifyRoles,
-    aircraft,
-    routes,
-    maintenance
+    settingsAircraftTypes,
+    settingsModifyAircraftTypes,
+    settingsAirports,
+    settingsModifyAirports,
+    activeAircraft,
+    historicAircraft,
+    currentRoutes,
+    historicRoutes,
+    pendingMaintenance,
+    historicMaintenance
   ];
 }

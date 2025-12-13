@@ -5,6 +5,8 @@ using aerosense.models.aerosense;
 using aerosense.models.context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("api/aircraft-type")]
@@ -63,18 +65,32 @@ public class AicraftTypeController : ControllerBase
     [Route("{id}")]
     public IActionResult Delete(int id)
     {
-        var ctx = new AerosenseContext();
-
-        var aircraftType = ctx.AircraftTypes.FirstOrDefault(at => at.Id == id);
-
-        if (aircraftType == null)
+        try
         {
-            return NotFound("Aircraft type not found".ToResponseError());
+            var ctx = new AerosenseContext();
+
+            var aircraftType = ctx.AircraftTypes.FirstOrDefault(at => at.Id == id);
+
+            if (aircraftType == null)
+            {
+                return NotFound("Aircraft type not found".ToResponseError());
+            }
+
+            ctx.AircraftTypes.Remove(aircraftType);
+            ctx.SaveChanges();
+
+            return Ok();
         }
-
-        ctx.AircraftTypes.Remove(aircraftType);
-        ctx.SaveChanges();
-
-        return Ok();
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+            {
+                return BadRequest("Aircraft Type cannot be deleted because it is used elsewhere in the app".ToResponseError());
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ namespace aerosense.models.context;
 
 using models.aerosense;
 using Microsoft.EntityFrameworkCore;
+
 public class AerosenseContext : DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
@@ -11,6 +12,8 @@ public class AerosenseContext : DbContext
     public DbSet<AircraftType> AircraftTypes { get; set; } = null!;
 
     public DbSet<Airport> Airports { get; set; } = null!;
+
+    public DbSet<Aircraft> Aircraft { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -28,6 +31,18 @@ public class AerosenseContext : DbContext
 
         modelBuilder.Entity<AircraftType>()
             .Property(at => at.WFSDate)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Aircraft>()
+            .Property(a => a.FirstFlight)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Aircraft>()
+            .Property(a => a.EISDate)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Aircraft>()
+            .Property(a => a.WFSDate)
             .HasColumnType("date");
     }
 }

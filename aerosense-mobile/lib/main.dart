@@ -1,8 +1,13 @@
-import 'package:aerosense/pages/aircraft/aircraft.dart';
+import 'package:aerosense/pages/aircraft/active-aircraft.dart';
+import 'package:aerosense/pages/aircraft/historic-aircraft.dart';
 import 'package:aerosense/pages/home.dart';
 import 'package:aerosense/pages/login.dart';
-import 'package:aerosense/pages/maintenance/maintenance.dart';
-import 'package:aerosense/pages/routes/routes.dart';
+import 'package:aerosense/pages/maintenance/historic-maintenance.dart';
+import 'package:aerosense/pages/maintenance/pending-maintenance.dart';
+import 'package:aerosense/pages/routes/current-routes.dart';
+import 'package:aerosense/pages/routes/historic-routes.dart';
+import 'package:aerosense/pages/settings/aircraft_types.dart';
+import 'package:aerosense/pages/settings/airports.dart';
 import 'package:aerosense/pages/settings/roles.dart';
 import 'package:aerosense/pages/settings/users.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +42,14 @@ class MainApp extends StatelessWidget {
         '/home': (BuildContext context) => const Home(),
         '/users': (BuildContext context) => const Users(),
         '/roles': (BuildContext context) => const Roles(),
-        '/aircraft': (BuildContext context) => const Aircraft(),
-        '/routes': (BuildContext context) => const Routes(),
-        '/maintenance': (BuildContext context) => const Maintenance()
+        '/aircraft-types': (BuildContext context) => const AircraftTypes(),
+        '/airports': (BuildContext context) => const Airports(),
+        '/active-aircraft': (BuildContext context) => const ActiveAircraft(),
+        '/historic-aircraft': (BuildContext context) => const HistoricAircraft(),
+        '/current-routes': (BuildContext context) => const CurrentRoutes(),
+        '/historic-routes': (BuildContext context) => const HistoricRoutes(),
+        '/pending-maintenance': (BuildContext context) => const PendingMaintenance(),
+        '/historic-maintenance': (BuildContext context) => const HistoricMaintenance()
       },
     );
   }

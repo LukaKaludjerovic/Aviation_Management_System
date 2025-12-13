@@ -119,18 +119,33 @@ class _HomeState extends State<Home> {
 
             case MenuItem.settingsRoles:
               navigatorKey.currentState?.pushReplacementNamed('/roles');
+            
+            case MenuItem.settingsAircraftTypes:
+              navigatorKey.currentState?.pushReplacementNamed('/aircraft-types');
+
+            case MenuItem.settingsAirports:
+              navigatorKey.currentState?.pushReplacementNamed('/airports');
 
             case MenuItem.home:
               navigatorKey.currentState?.pushReplacementNamed('/home');
 
-            case MenuItem.aircraft:
-              navigatorKey.currentState?.pushReplacementNamed('/aircraft');
+            case MenuItem.activeAircraft:
+              navigatorKey.currentState?.pushReplacementNamed('/active-aircraft');
+
+            case MenuItem.historicAircraft:
+              navigatorKey.currentState?.pushReplacementNamed('/historic-aircraft');
             
-            case MenuItem.routes:
-              navigatorKey.currentState?.pushReplacementNamed('/routes');
+            case MenuItem.currentRoutes:
+              navigatorKey.currentState?.pushReplacementNamed('/current-routes');
+
+            case MenuItem.historicRoutes:
+              navigatorKey.currentState?.pushReplacementNamed('/historic-routes');
             
-            case MenuItem.maintenance:
-              navigatorKey.currentState?.pushReplacementNamed('/maintenance');
+            case MenuItem.pendingMaintenance:
+              navigatorKey.currentState?.pushReplacementNamed('/pending-maintenance');
+
+            case MenuItem.historicMaintenance:
+              navigatorKey.currentState?.pushReplacementNamed('/historic-maintenance');
           }
         },
       ),

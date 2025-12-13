@@ -59,57 +59,234 @@ class SideMenu extends StatelessWidget {
                 onSelect(MenuItem.home);
               },
             ),
-
-            if (Auth.instance.allowed(Permission.aircraft))
-              ListTile(
-                leading: const Icon(Icons.flight),
-                title: Text(
-                  'Aircraft',
-                  style: TextStyle(
-                    fontWeight: selected == MenuItem.aircraft 
-                    ? FontWeight.bold 
-                    : FontWeight.normal
+            
+            if (Auth.instance.allowed(Permission.activeAircraft) ||
+                Auth.instance.allowed(Permission.historicAircraft)
+            ) ...<Widget>[
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  iconTheme: const IconThemeData(color: Colors.black),
+                  expansionTileTheme: const ExpansionTileThemeData(
+                    iconColor: Colors.black,
+                    collapsedIconColor: Colors.black,
+                    textColor: Colors.black,
+                    collapsedTextColor: Colors.black,
                   ),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelect(MenuItem.aircraft);
-                },
+                child: ExpansionTile(
+                  initiallyExpanded: 
+                    selected == MenuItem.activeAircraft || 
+                    selected == MenuItem.historicAircraft,
+                  leading: const Icon(Icons.connecting_airports),
+                  title: Text(
+                    'Aircraft',
+                    style: TextStyle(
+                      fontWeight: 
+                        selected == MenuItem.activeAircraft || 
+                        selected == MenuItem.historicAircraft
+                          ? FontWeight.bold
+                          : FontWeight.normal
+                    ),
+                  ),
+                  childrenPadding: const EdgeInsets.only(
+                    left: 40, 
+                    right: 40
+                  ),
+                  children: <Widget>[
+                    if (Auth.instance.allowed(Permission.activeAircraft))
+                      ListTile(
+                        leading: const Icon(Icons.airplanemode_active),
+                        title: Text(
+                          'Active Aircraft',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.activeAircraft
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.activeAircraft,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.activeAircraft);
+                        }
+                      ),
+                    if (Auth.instance.allowed(Permission.historicAircraft))
+                      ListTile(
+                        leading: const Icon(Icons.airplanemode_inactive),
+                        title: Text(
+                          'Historic Aircraft',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.historicAircraft
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.historicAircraft,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.historicAircraft);
+                        }
+                      ),
+                  ],
+                ),
               ),
+              const Divider()
+            ],
 
-            if (Auth.instance.allowed(Permission.routes))
-              ListTile(
-                leading: const Icon(Icons.route),
-                title: Text(
-                  'Routes',
-                  style: TextStyle(
-                    fontWeight: selected == MenuItem.routes 
-                    ? FontWeight.bold 
-                    : FontWeight.normal
+            if (Auth.instance.allowed(Permission.currentRoutes) ||
+                Auth.instance.allowed(Permission.historicRoutes)
+            ) ...<Widget>[
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  iconTheme: const IconThemeData(color: Colors.black),
+                  expansionTileTheme: const ExpansionTileThemeData(
+                    iconColor: Colors.black,
+                    collapsedIconColor: Colors.black,
+                    textColor: Colors.black,
+                    collapsedTextColor: Colors.black,
                   ),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelect(MenuItem.routes);
-                },
+                child: ExpansionTile(
+                  initiallyExpanded: 
+                    selected == MenuItem.currentRoutes || 
+                    selected == MenuItem.historicRoutes,
+                  leading: const Icon(Icons.route),
+                  title: Text(
+                    'Routes',
+                    style: TextStyle(
+                      fontWeight: 
+                        selected == MenuItem.currentRoutes || 
+                        selected == MenuItem.historicRoutes
+                          ? FontWeight.bold
+                          : FontWeight.normal
+                    ),
+                  ),
+                  childrenPadding: const EdgeInsets.only(
+                    left: 40, 
+                    right: 40
+                  ),
+                  children: <Widget>[
+                    if (Auth.instance.allowed(Permission.currentRoutes))
+                      ListTile(
+                        leading: const Icon(Icons.flight_takeoff),
+                        title: Text(
+                          'Current Routes',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.currentRoutes
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.currentRoutes,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.currentRoutes);
+                        }
+                      ),
+                    if (Auth.instance.allowed(Permission.historicRoutes))
+                      ListTile(
+                        leading: const Icon(Icons.flight_land),
+                        title: Text(
+                          'Historic Routes',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.historicRoutes
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.historicRoutes,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.historicRoutes);
+                        }
+                      ),
+                  ],
+                ),
               ),
+              const Divider()
+            ],
 
-            if (Auth.instance.allowed(Permission.maintenance))
-              ListTile(
-                leading: const Icon(Icons.build),
-                title: Text(
-                  'Maintenance',
-                  style: TextStyle(
-                    fontWeight: selected == MenuItem.maintenance 
-                    ? FontWeight.bold 
-                    : FontWeight.normal
+            if (Auth.instance.allowed(Permission.pendingMaintenance) ||
+                Auth.instance.allowed(Permission.historicMaintenance)
+            ) ...<Widget>[
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  iconTheme: const IconThemeData(color: Colors.black),
+                  expansionTileTheme: const ExpansionTileThemeData(
+                    iconColor: Colors.black,
+                    collapsedIconColor: Colors.black,
+                    textColor: Colors.black,
+                    collapsedTextColor: Colors.black,
                   ),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelect(MenuItem.maintenance);
-                },
+                child: ExpansionTile(
+                  initiallyExpanded: 
+                    selected == MenuItem.pendingMaintenance || 
+                    selected == MenuItem.historicMaintenance,
+                  leading: const Icon(Icons.build),
+                  title: Text(
+                    'Maintenance',
+                    style: TextStyle(
+                      fontWeight: 
+                        selected == MenuItem.pendingMaintenance || 
+                        selected == MenuItem.historicMaintenance
+                          ? FontWeight.bold
+                          : FontWeight.normal
+                    ),
+                  ),
+                  childrenPadding: const EdgeInsets.only(
+                    left: 40, 
+                    right: 40
+                  ),
+                  children: <Widget>[
+                    if (Auth.instance.allowed(Permission.pendingMaintenance))
+                      ListTile(
+                        leading: const Icon(Icons.pending_actions),
+                        title: Text(
+                          'Pending Maintenance',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.pendingMaintenance
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.pendingMaintenance,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.pendingMaintenance);
+                        }
+                      ),
+                    if (Auth.instance.allowed(Permission.historicMaintenance))
+                      ListTile(
+                        leading: const Icon(Icons.done_all),
+                        title: Text(
+                          'Historic Maintenance',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.historicMaintenance
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.historicMaintenance,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.historicMaintenance);
+                        }
+                      ),
+                  ],
+                ),
               ),
+              const Divider()
+            ],
 
             if (Auth.instance.allowed(Permission.settingsUsers) ||
                 (Auth.instance.allowed(Permission.settingsUsers) && Auth.instance.allowed(Permission.settingsModifyUsers)) ||
@@ -128,14 +305,22 @@ class SideMenu extends StatelessWidget {
                   ),
                 ),
                 child: ExpansionTile(
-                  initiallyExpanded: selected == MenuItem.settingsUsers || selected == MenuItem.settingsRoles,
+                  initiallyExpanded: 
+                    selected == MenuItem.settingsUsers || 
+                    selected == MenuItem.settingsRoles ||
+                    selected == MenuItem.settingsAircraftTypes ||
+                    selected == MenuItem.settingsAirports,
                   leading: const Icon(Icons.settings),
                   title: Text(
                     'Settings',
                     style: TextStyle(
-                      fontWeight: selected == MenuItem.settingsUsers || selected == MenuItem.settingsRoles
-                        ? FontWeight.bold
-                        : FontWeight.normal
+                      fontWeight: 
+                        selected == MenuItem.settingsUsers || 
+                        selected == MenuItem.settingsRoles ||
+                        selected == MenuItem.settingsAircraftTypes ||
+                        selected == MenuItem.settingsAirports
+                          ? FontWeight.bold
+                          : FontWeight.normal
                     ),
                   ),
                   childrenPadding: const EdgeInsets.only(
@@ -179,12 +364,51 @@ class SideMenu extends StatelessWidget {
                           onSelect(MenuItem.settingsRoles);
                         }
                       ),
+                    if (Auth.instance.allowed(Permission.settingsAircraftTypes))
+                      ListTile(
+                        leading: const Icon(Icons.airlines),
+                        title: Text(
+                          'Aircraft Types',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.settingsAircraftTypes
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.settingsAircraftTypes,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.settingsAircraftTypes);
+                        }
+                      ),
+                    if (Auth.instance.allowed(Permission.settingsAirports))
+                      ListTile(
+                        leading: const Icon(Icons.airline_stops),
+                        title: Text(
+                          'Airports',
+                          style: TextStyle(
+                            fontWeight: selected == MenuItem.settingsAirports
+                              ? FontWeight.bold
+                              : FontWeight.normal
+                          ),
+                        ),
+                        selected: selected == MenuItem.settingsAirports,
+                        selectedColor: Colors.black,
+                        onTap: () {
+                          Navigator.pop(context);
+                          onSelect(MenuItem.settingsAirports);
+                        }
+                      ),
                   ],
                 ),
               ),
-              const Divider(),
+              const Divider()
             ],
 
+            const Spacer(),
+
+            const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),

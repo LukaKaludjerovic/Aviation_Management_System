@@ -5,6 +5,8 @@ using aerosense.models.aerosense;
 using aerosense.models.context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("api/airport")]
@@ -47,18 +49,32 @@ public class AirportController : ControllerBase
     [Route("{id}")]
     public IActionResult Delete(int id)
     {
-        var ctx = new AerosenseContext();
-
-        var airport = ctx.Airports.FirstOrDefault(at => at.Id == id);
-
-        if (airport == null)
+        try
         {
-            return NotFound("Airport not found".ToResponseError());
+            var ctx = new AerosenseContext();
+
+            var airport = ctx.Airports.FirstOrDefault(at => at.Id == id);
+
+            if (airport == null)
+            {
+                return NotFound("Airport not found".ToResponseError());
+            }
+
+            ctx.Airports.Remove(airport);
+            ctx.SaveChanges();
+
+            return Ok();
         }
-
-        ctx.Airports.Remove(airport);
-        ctx.SaveChanges();
-
-        return Ok();
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+            {
+                return BadRequest("Airport cannot be deleted because it is used elsewhere in the app".ToResponseError());
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
 }
