@@ -10,6 +10,8 @@ public class AerosenseContext : DbContext
 
     public DbSet<AircraftType> AircraftTypes { get; set; } = null!;
 
+    public DbSet<Airport> Airports { get; set; } = null!;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
