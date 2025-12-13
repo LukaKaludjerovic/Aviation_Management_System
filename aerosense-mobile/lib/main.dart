@@ -1,11 +1,11 @@
-import 'package:aerosense/pages/aircraft/active-aircraft.dart';
-import 'package:aerosense/pages/aircraft/historic-aircraft.dart';
+import 'package:aerosense/pages/aircraft/active_aircraft.dart';
+import 'package:aerosense/pages/aircraft/historic_aircraft.dart';
 import 'package:aerosense/pages/home.dart';
 import 'package:aerosense/pages/login.dart';
-import 'package:aerosense/pages/maintenance/historic-maintenance.dart';
-import 'package:aerosense/pages/maintenance/pending-maintenance.dart';
-import 'package:aerosense/pages/routes/current-routes.dart';
-import 'package:aerosense/pages/routes/historic-routes.dart';
+import 'package:aerosense/pages/maintenance/historic_maintenance.dart';
+import 'package:aerosense/pages/maintenance/pending_maintenance.dart';
+import 'package:aerosense/pages/routes/current_routes.dart';
+import 'package:aerosense/pages/routes/historic_routes.dart';
 import 'package:aerosense/pages/settings/aircraft_types.dart';
 import 'package:aerosense/pages/settings/airports.dart';
 import 'package:aerosense/pages/settings/roles.dart';
