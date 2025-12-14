@@ -1,7 +1,8 @@
 class MenuItem {
   static const String settingsUsers = 'SettingsUsers';
   static const String settingsRoles = 'SettingsRoles';
-  static const String settingsAircraftTypes = 'SettingsAircraftTypes';
+  static const String settingsActiveAircraftTypes = 'SettingsActiveAircraftTypes';
+  static const String settingsHistoricAircraftTypes = 'SettingsHistoricAircraftTypes';
   static const String settingsAirports = 'SettingsAirports';
   static const String home = 'Home';
   static const String activeAircraft = 'ActiveAircraft';

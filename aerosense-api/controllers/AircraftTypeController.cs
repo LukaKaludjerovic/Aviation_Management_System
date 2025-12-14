@@ -21,6 +21,7 @@ public class AicraftTypeController : ControllerBase
 
         var aircraftTypes = ctx.AircraftTypes
             .Where(at => at.WFSDate == null)
+            .OrderBy(at => at.Range)
             .ToList();
 
         return Ok(aircraftTypes);
@@ -34,6 +35,7 @@ public class AicraftTypeController : ControllerBase
 
         var aircraftTypes = ctx.AircraftTypes
             .Where(at => at.WFSDate != null)
+            .OrderBy(at => at.Range)
             .ToList();
 
         return Ok(aircraftTypes);

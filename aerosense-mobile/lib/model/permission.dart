@@ -4,8 +4,9 @@ class Permission {
   static const String settingsModifyUsers = 'SettingsModifyUsers';
   static const String settingsRoles = 'SettingsRoles';
   static const String settingsModifyRoles = 'SettingsModifyRoles';
-  static const String settingsAircraftTypes = 'SettingsAircraftTypes';
-  static const String settingsModifyAircraftTypes = 'SettingsModifyAircraftTypes';
+  static const String settingsActiveAircraftTypes = 'SettingsActiveAircraftTypes';
+  static const String settingsModifyActiveAircraftTypes = 'SettingsModifyActiveAircraftTypes';
+  static const String settingsHistoricAircraftTypes = 'SettingsHistoricAircraftTypes';
   static const String settingsAirports = 'SettingsAirports';
   static const String settingsModifyAirports = 'SettingsModifyAirports';
   static const String activeAircraft = 'ActiveAircraft';
@@ -21,8 +22,9 @@ class Permission {
     settingsModifyUsers,
     settingsRoles,
     settingsModifyRoles,
-    settingsAircraftTypes,
-    settingsModifyAircraftTypes,
+    settingsActiveAircraftTypes,
+    settingsModifyActiveAircraftTypes,
+    settingsHistoricAircraftTypes,
     settingsAirports,
     settingsModifyAirports,
     activeAircraft,

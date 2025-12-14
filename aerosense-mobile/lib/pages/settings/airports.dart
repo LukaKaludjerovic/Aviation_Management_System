@@ -32,8 +32,11 @@ class _AirportsState extends State<Airports> {
             case MenuItem.settingsRoles:
               navigatorKey.currentState?.pushReplacementNamed('/roles');
             
-            case MenuItem.settingsAircraftTypes:
-              navigatorKey.currentState?.pushReplacementNamed('/aircraft-types');
+            case MenuItem.settingsActiveAircraftTypes:
+              navigatorKey.currentState?.pushReplacementNamed('/active-aircraft-types');
+
+            case MenuItem.settingsHistoricAircraftTypes:
+              navigatorKey.currentState?.pushReplacementNamed('/historic-aircraft-types');
 
             case MenuItem.settingsAirports:
               navigatorKey.currentState?.pushReplacementNamed('/airports');

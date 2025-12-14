@@ -6,8 +6,9 @@ import 'package:aerosense/pages/maintenance/historic_maintenance.dart';
 import 'package:aerosense/pages/maintenance/pending_maintenance.dart';
 import 'package:aerosense/pages/routes/current_routes.dart';
 import 'package:aerosense/pages/routes/historic_routes.dart';
-import 'package:aerosense/pages/settings/aircraft_types.dart';
+import 'package:aerosense/pages/settings/active_aircraft_types.dart';
 import 'package:aerosense/pages/settings/airports.dart';
+import 'package:aerosense/pages/settings/historic_aircraft_types.dart';
 import 'package:aerosense/pages/settings/roles.dart';
 import 'package:aerosense/pages/settings/users.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Aviation Management System',
+      locale: const Locale('en'),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -42,7 +44,8 @@ class MainApp extends StatelessWidget {
         '/home': (BuildContext context) => const Home(),
         '/users': (BuildContext context) => const Users(),
         '/roles': (BuildContext context) => const Roles(),
-        '/aircraft-types': (BuildContext context) => const AircraftTypes(),
+        '/active-aircraft-types': (BuildContext context) => const ActiveAircraftTypes(),
+        '/historic-aircraft-types': (BuildContext context) => const HistoricAircraftTypes(),
         '/airports': (BuildContext context) => const Airports(),
         '/active-aircraft': (BuildContext context) => const ActiveAircraft(),
         '/historic-aircraft': (BuildContext context) => const HistoricAircraft(),
