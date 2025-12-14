@@ -18,7 +18,11 @@ public class AirportController : ControllerBase
     {
         var ctx = new AerosenseContext();
 
-        var airports = ctx.Airports.ToList();
+        var airports = ctx.Airports
+            .OrderBy(a => a.Country)
+            .ThenBy(a => a.City)
+            .ThenBy(a => a.Name)
+            .ToList();
 
         return Ok(airports);
     }

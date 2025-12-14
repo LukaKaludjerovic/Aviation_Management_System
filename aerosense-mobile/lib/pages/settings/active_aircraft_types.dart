@@ -20,6 +20,8 @@ class ActiveAircraftTypes extends StatefulWidget {
 class _ActiveAircraftTypesState extends State<ActiveAircraftTypes> {
   String selected = MenuItem.settingsActiveAircraftTypes;
 
+  final ScrollController _activeAircraftController = ScrollController();
+
   List<Map<String, dynamic>> _aircraftTypes = <Map<String, dynamic>>[];
 
   @override
@@ -121,8 +123,10 @@ class _ActiveAircraftTypesState extends State<ActiveAircraftTypes> {
       body: _aircraftTypes.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : Scrollbar(
+          controller: _activeAircraftController,
           thumbVisibility: true,
           child: SingleChildScrollView(
+            controller: _activeAircraftController,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

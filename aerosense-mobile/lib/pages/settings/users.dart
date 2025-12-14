@@ -19,6 +19,8 @@ class Users extends StatefulWidget{
 class _UsersState extends State<Users> {
   String selected = MenuItem.settingsUsers;
 
+  final ScrollController _usersController = ScrollController();
+
   List<Map<String, dynamic>> _users = <Map<String, dynamic>>[];
   List<Map<String, dynamic>> _roles = <Map<String, dynamic>>[];
 
@@ -136,8 +138,10 @@ class _UsersState extends State<Users> {
       body: _users.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : Scrollbar(
+          controller: _usersController,
           thumbVisibility: true,
           child: SingleChildScrollView(
+            controller: _usersController,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

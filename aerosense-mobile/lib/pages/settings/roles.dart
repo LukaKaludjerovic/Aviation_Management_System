@@ -19,6 +19,8 @@ class Roles extends StatefulWidget{
 class _RolesState extends State<Roles> {
   String selected = MenuItem.settingsRoles;
 
+  final ScrollController _rolesController = ScrollController();
+
   List<Map<String, dynamic>> _roles = <Map<String, dynamic>>[];
 
   @override
@@ -118,8 +120,10 @@ class _RolesState extends State<Roles> {
       body: _roles.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : Scrollbar(
+          controller: _rolesController,
           thumbVisibility: true,
           child: SingleChildScrollView(
+            controller: _rolesController,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

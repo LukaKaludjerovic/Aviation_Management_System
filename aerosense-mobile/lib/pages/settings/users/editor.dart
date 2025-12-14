@@ -28,8 +28,8 @@ class _EditorState extends State<Editor> {
   late List<String> _allowedFunctions;
   late List<String> _forbiddenFunctions;
 
-  final ScrollController _allowedController = ScrollController();
-  final ScrollController _forbiddenController = ScrollController();
+  final ScrollController _allowedFunctionsController = ScrollController();
+  final ScrollController _forbiddenFunctionsController = ScrollController();
 
   bool _firstNameError = false;
   bool _lastNameError = false;
@@ -336,9 +336,9 @@ class _EditorState extends State<Editor> {
               height: 150,
               child: Scrollbar(
                 thumbVisibility: true,
-                controller: _allowedController,
+                controller: _allowedFunctionsController,
                 child: ListView(
-                  controller: _allowedController,
+                  controller: _allowedFunctionsController,
                   children: Permission.all.map((String func) {
                     final bool checked = _allowedFunctions.contains(func);
 
@@ -375,9 +375,9 @@ class _EditorState extends State<Editor> {
               height: 150,
               child: Scrollbar(
                 thumbVisibility: true,
-                controller: _forbiddenController,
+                controller: _forbiddenFunctionsController,
                 child: ListView(
-                  controller: _forbiddenController,
+                  controller: _forbiddenFunctionsController,
                   children: Permission.all.map((String func) {
                     final bool checked = _forbiddenFunctions.contains(func);
 

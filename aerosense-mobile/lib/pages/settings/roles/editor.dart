@@ -21,6 +21,8 @@ class _EditorState extends State<Editor> {
   late TextEditingController _name;
   late List<String> _selectedFunctions;
 
+  final ScrollController _allowedFunctionsController = ScrollController();
+
   bool _nameError = false;
 
   @override
@@ -110,8 +112,10 @@ class _EditorState extends State<Editor> {
             SizedBox(
               height: 300,
               child: Scrollbar(
+                controller: _allowedFunctionsController,
                 thumbVisibility: true,
                 child: ListView(
+                  controller: _allowedFunctionsController,
                   children: Permission.all.map((String func) {
                     final bool checked = _selectedFunctions.contains(func);
 

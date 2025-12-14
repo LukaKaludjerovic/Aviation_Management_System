@@ -17,6 +17,8 @@ class HistoricAircraftTypes extends StatefulWidget {
 class _HistoricAircraftTypesState extends State<HistoricAircraftTypes> {
   String selected = MenuItem.settingsHistoricAircraftTypes;
 
+  final ScrollController _historicAircraftController = ScrollController();
+
   List<Map<String, dynamic>> _aircraftTypes = <Map<String, dynamic>>[];
 
   @override
@@ -87,8 +89,10 @@ class _HistoricAircraftTypesState extends State<HistoricAircraftTypes> {
       body: _aircraftTypes.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : Scrollbar(
+          controller: _historicAircraftController,
           thumbVisibility: true,
           child: SingleChildScrollView(
+            controller: _historicAircraftController,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

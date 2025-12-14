@@ -252,12 +252,16 @@ class _EditorState extends State<Editor> {
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: Colors.black,
+                          colorScheme: ColorScheme.light(
+                            primary: Colors.lightBlue[300]!,
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.black,
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                              )
                             ),
                           ),
                         ),
