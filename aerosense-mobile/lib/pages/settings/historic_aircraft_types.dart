@@ -17,7 +17,7 @@ class HistoricAircraftTypes extends StatefulWidget {
 class _HistoricAircraftTypesState extends State<HistoricAircraftTypes> {
   String selected = MenuItem.settingsHistoricAircraftTypes;
 
-  final ScrollController _historicAircraftController = ScrollController();
+  final ScrollController _historicAircraftTypesController = ScrollController();
 
   List<Map<String, dynamic>> _aircraftTypes = <Map<String, dynamic>>[];
 
@@ -89,10 +89,10 @@ class _HistoricAircraftTypesState extends State<HistoricAircraftTypes> {
       body: _aircraftTypes.isEmpty
         ? Center(child: CircularProgressIndicator(color: Colors.lightBlue[300]))
         : Scrollbar(
-          controller: _historicAircraftController,
+          controller: _historicAircraftTypesController,
           thumbVisibility: true,
           child: SingleChildScrollView(
-            controller: _historicAircraftController,
+            controller: _historicAircraftTypesController,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +127,7 @@ class _HistoricAircraftTypesState extends State<HistoricAircraftTypes> {
                           minWidth: 500
                         ),
                         child: DataTable(
-                          columnSpacing: 60,
+                          columnSpacing: 30,
                           dataRowMaxHeight: double.infinity,
                           columns: const <DataColumn>[
                             DataColumn(

@@ -170,7 +170,7 @@ class _AirportsState extends State<Airports> {
                           minWidth: 500
                         ),
                         child: DataTable(
-                          columnSpacing: 60,
+                          columnSpacing: 30,
                           dataRowMaxHeight: double.infinity,
                           columns: const <DataColumn>[
                             DataColumn(

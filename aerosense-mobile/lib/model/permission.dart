@@ -10,6 +10,7 @@ class Permission {
   static const String settingsAirports = 'SettingsAirports';
   static const String settingsModifyAirports = 'SettingsModifyAirports';
   static const String activeAircraft = 'ActiveAircraft';
+  static const String modifyActiveAircraft = 'ModifyActiveAircraft';
   static const String historicAircraft = 'HistoricAircraft';
   static const String currentRoutes = 'CurrentRoutes';
   static const String historicRoutes = 'HistoricRoutes';
@@ -28,6 +29,7 @@ class Permission {
     settingsAirports,
     settingsModifyAirports,
     activeAircraft,
+    modifyActiveAircraft,
     historicAircraft,
     currentRoutes,
     historicRoutes,

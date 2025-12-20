@@ -184,7 +184,7 @@ class _UsersState extends State<Users> {
                           minWidth: 500
                         ),
                         child: DataTable(
-                          columnSpacing: 60,
+                          columnSpacing: 30,
                           dataRowMaxHeight: double.infinity,
                           columns: const <DataColumn>[
                             DataColumn(
