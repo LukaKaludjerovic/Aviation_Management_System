@@ -3,6 +3,7 @@ import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
 import 'package:aerosense/model/permission.dart';
+import 'package:aerosense/pages/aircraft/editor.dart';
 import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:aerosense/widgets/side_menu.dart';
@@ -22,11 +23,13 @@ class _ActiveAircraftState extends State<ActiveAircraft> {
   final ScrollController _activeAircraftController = ScrollController();
 
   List<Map<String, dynamic>> _activeAircraft = <Map<String, dynamic>>[];
+  List<Map<String, dynamic>> _types = <Map<String, dynamic>>[];
 
   @override
   void initState() {
     super.initState();
     _fetchActiveAircraft();
+    _fetchTypes();
   }
 
   Future<void> _fetchActiveAircraft() async {
@@ -39,7 +42,56 @@ class _ActiveAircraftState extends State<ActiveAircraft> {
     });
   }
 
-  void _openAircraftDialog(Map<String, dynamic> aircraftType) {}
+  Future<void> _fetchTypes() async {
+    final List<dynamic> response = await Api.instance.get('/api/aircraft-type/active') as List<dynamic>;
+
+    setState(() {
+      _types = response
+        .map((dynamic e) => e as Map<String, dynamic>)
+        .toList();
+    });
+  }
+
+  void _openAircraftDialog(Map<String, dynamic> aircraft) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Editor(
+          aircraft: aircraft,
+          types: _types,
+          onSave: (Map<String, dynamic> updatedAircraft) async {
+            if (aircraft['id'] == 0) {
+              await Api.instance.post('/api/aircraft', <String, dynamic>{
+                'msn': updatedAircraft['msn'],
+                'registration': updatedAircraft['registration'],
+                'type': updatedAircraft['type'],
+                'configuration': updatedAircraft['configuration'],
+                'firstFlight': updatedAircraft['firstFlight'],
+                'eisDate': updatedAircraft['eisDate']
+              });
+            }
+            else {
+              await Api.instance.put('/api/aircraft', updatedAircraft);
+            }
+            await _fetchActiveAircraft();
+          },
+          onDelete: () async {
+            if (aircraft['id'] != 0) {
+              await Api.instance.delete("/api/aircraft/${aircraft["id"]}");
+              await _fetchActiveAircraft();
+            }
+          },
+          onRetire: () async {
+            if (aircraft['id'] != 0) {
+              await Api.instance.put("/api/aircraft/${aircraft["id"]}/retire", <String, dynamic>{});
+              await _fetchActiveAircraft();
+              await _fetchTypes();
+            }
+          },
+        );
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

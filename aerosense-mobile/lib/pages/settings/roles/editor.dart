@@ -110,7 +110,7 @@ class _EditorState extends State<Editor> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(
-              height: 300,
+              height: 700,
               child: Scrollbar(
                 controller: _allowedFunctionsController,
                 thumbVisibility: true,

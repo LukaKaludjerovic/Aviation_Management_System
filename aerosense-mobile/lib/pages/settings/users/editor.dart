@@ -269,12 +269,6 @@ class _EditorState extends State<Editor> {
               const SizedBox(height: 16),
             ],
 
-            const Text(
-              'Role',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-
             Theme(
               data: Theme.of(context).copyWith(
                 inputDecorationTheme: const InputDecorationTheme(
@@ -292,7 +286,7 @@ class _EditorState extends State<Editor> {
               child: DropdownButtonFormField<Map<String, dynamic>>(
                 value: _selectedRole,
                 decoration: const InputDecoration(
-                  labelText: 'Select role',
+                  labelText: 'User role',
                   labelStyle: TextStyle(color: Colors.black),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -333,7 +327,7 @@ class _EditorState extends State<Editor> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(
-              height: 150,
+              height: 200,
               child: Scrollbar(
                 thumbVisibility: true,
                 controller: _allowedFunctionsController,
@@ -372,7 +366,7 @@ class _EditorState extends State<Editor> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(
-              height: 150,
+              height: 200,
               child: Scrollbar(
                 thumbVisibility: true,
                 controller: _forbiddenFunctionsController,
