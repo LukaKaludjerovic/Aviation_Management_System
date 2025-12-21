@@ -21,6 +21,7 @@ public class AircraftController : ControllerBase
         var aircraft = ctx.Aircraft
             .Include(a => a.Type)
             .Where(a => a.WFSDate == null)
+            .OrderBy(a => a.Registration)
             .ToList();
 
         return Ok(aircraft);
@@ -35,6 +36,7 @@ public class AircraftController : ControllerBase
         var aircraft = ctx.Aircraft
             .Include(a => a.Type)
             .Where(a => a.WFSDate != null)
+            .OrderBy(a => a.Registration)
             .ToList();
 
         return Ok(aircraft);
