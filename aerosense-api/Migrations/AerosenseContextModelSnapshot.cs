@@ -139,6 +139,76 @@ namespace aerosense.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("aerosense.models.aerosense.Route", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlockTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CommencedAt")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("DestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Distance")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("OriginId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TerminatedAt")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinationId");
+
+                    b.HasIndex("OriginId");
+
+                    b.ToTable("Routes");
+                });
+
+            modelBuilder.Entity("aerosense.models.aerosense.RouteDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AircraftTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeOnly>("Arrival")
+                        .HasColumnType("time");
+
+                    b.Property<string>("DaysOfWeek")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeOnly>("Departure")
+                        .HasColumnType("time");
+
+                    b.Property<string>("FlightNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RouteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AircraftTypeId");
+
+                    b.HasIndex("RouteId");
+
+                    b.ToTable("RouteDetail");
+                });
+
             modelBuilder.Entity("aerosense.models.aerosense.User", b =>
                 {
                     b.Property<int>("Id")
@@ -187,6 +257,36 @@ namespace aerosense.Migrations
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("aerosense.models.aerosense.Route", b =>
+                {
+                    b.HasOne("aerosense.models.aerosense.Airport", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinationId");
+
+                    b.HasOne("aerosense.models.aerosense.Airport", "Origin")
+                        .WithMany()
+                        .HasForeignKey("OriginId");
+
+                    b.Navigation("Destination");
+
+                    b.Navigation("Origin");
+                });
+
+            modelBuilder.Entity("aerosense.models.aerosense.RouteDetail", b =>
+                {
+                    b.HasOne("aerosense.models.aerosense.AircraftType", "AircraftType")
+                        .WithMany()
+                        .HasForeignKey("AircraftTypeId");
+
+                    b.HasOne("aerosense.models.aerosense.Route", null)
+                        .WithMany("RouteDetails")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AircraftType");
+                });
+
             modelBuilder.Entity("aerosense.models.aerosense.User", b =>
                 {
                     b.HasOne("aerosense.models.aerosense.Role", "Role")
@@ -194,6 +294,11 @@ namespace aerosense.Migrations
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("aerosense.models.aerosense.Route", b =>
+                {
+                    b.Navigation("RouteDetails");
                 });
 #pragma warning restore 612, 618
         }

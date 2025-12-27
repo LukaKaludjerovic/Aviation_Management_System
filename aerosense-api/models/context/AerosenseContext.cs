@@ -15,6 +15,8 @@ public class AerosenseContext : DbContext
 
     public DbSet<Aircraft> Aircraft { get; set; } = null!;
 
+    public DbSet<Route> Routes { get; set; } = null!;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -43,6 +45,14 @@ public class AerosenseContext : DbContext
 
         modelBuilder.Entity<Aircraft>()
             .Property(a => a.WFSDate)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Route>()
+            .Property(r => r.CommencedAt)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Route>()
+            .Property(r => r.TerminatedAt)
             .HasColumnType("date");
     }
 }
