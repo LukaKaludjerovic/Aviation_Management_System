@@ -16,6 +16,7 @@ public static class Permission
     public static readonly string ModifyActiveAircraft = "ModifyActiveAircraft";
     public static readonly string HistoricAircraft = "HistoricAircraft";
     public static readonly string CurrentRoutes = "CurrentRoutes";
+    public static readonly string ModifyCurrentRoutes = "ModifyCurrentRoutes";
     public static readonly string HistoricRoutes = "HistoricRoutes";
     public static readonly string PendingMaintenance = "PendingMaintenance";
     public static readonly string HistoricMaintenance = "HistoricMaintenance";

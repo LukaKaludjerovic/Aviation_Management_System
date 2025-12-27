@@ -3,6 +3,7 @@ namespace aerosense.controllers;
 using aerosense.extensions;
 using aerosense.models.aerosense;
 using aerosense.models.context;
+using aerosense.utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ using Microsoft.EntityFrameworkCore;
 public class RouteController : ControllerBase
 {
     [HttpGet]
-    [Route("active")]
-    public IActionResult ListActive()
+    [Route("current")]
+    public IActionResult ListCurrent()
     {
         var ctx = new AerosenseContext();
 
@@ -50,6 +51,16 @@ public class RouteController : ControllerBase
     public IActionResult Create([FromBody] Route route)
     {
         var ctx = new AerosenseContext();
+
+        if (route.Origin == null || route.Destination == null)
+        {
+            return BadRequest("Origin and Destination Airports are required".ToResponseError());
+        }
+
+        ctx.Airports.Attach(route.Origin);
+        ctx.Airports.Attach(route.Destination);
+
+        route.Distance = GeoUtils.GreatCircleDistance(route.Origin, route.Destination);
 
         ctx.Routes.Add(route);
         ctx.SaveChanges();

@@ -13,6 +13,7 @@ class Permission {
   static const String modifyActiveAircraft = 'ModifyActiveAircraft';
   static const String historicAircraft = 'HistoricAircraft';
   static const String currentRoutes = 'CurrentRoutes';
+  static const String modifyCurrentRoutes = 'ModifyCurrentRoutes';
   static const String historicRoutes = 'HistoricRoutes';
   static const String pendingMaintenance = 'PendingMaintenance';
   static const String historicMaintenance = 'HistoricMaintenance';
@@ -32,6 +33,7 @@ class Permission {
     modifyActiveAircraft,
     historicAircraft,
     currentRoutes,
+    modifyCurrentRoutes,
     historicRoutes,
     pendingMaintenance,
     historicMaintenance
