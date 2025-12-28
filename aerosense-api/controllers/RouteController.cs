@@ -74,8 +74,6 @@ public class RouteController : ControllerBase
         var ctx = new AerosenseContext();
 
         var dbRoute = ctx.Routes
-            .Include(r => r.Origin)
-            .Include(r => r.Destination)
             .Include(r => r.RouteDetails)
             .ThenInclude(rd => rd.AircraftType)
             .FirstOrDefault(r => r.Id == route.Id);

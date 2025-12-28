@@ -452,7 +452,7 @@ class _EditorState extends State<Editor> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                if (!isNew && widget.onRetire != null)
+                if (!isNew && widget.onDelete != null)
                   TextButton(
                     onPressed: () async {
                       await widget.onDelete!();

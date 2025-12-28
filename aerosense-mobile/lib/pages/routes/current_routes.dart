@@ -3,6 +3,7 @@ import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
 import 'package:aerosense/model/permission.dart';
+import 'package:aerosense/pages/routes/editor.dart';
 import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:aerosense/widgets/side_menu.dart';
@@ -22,11 +23,13 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
   final ScrollController _currentRoutesController = ScrollController();
 
   List<Map<String, dynamic>> _currentRoutes = <Map<String, dynamic>>[];
+  List<Map<String, dynamic>> _airports = <Map<String, dynamic>>[];
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentRoutes();
+    _fetchAirports();
   }
 
   Future<void> _fetchCurrentRoutes() async {
@@ -39,8 +42,56 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
     });
   }
 
-  void _openRoutesDialog(Map<String, dynamic> aircraft) {
-    
+  Future<void> _fetchAirports() async {
+    final List<dynamic> response = await Api.instance.get('/api/airport') as List<dynamic>;
+
+    setState(() {
+      _airports = response
+        .map((dynamic e) => e as Map<String, dynamic>)
+        .toList();
+    });
+  }
+
+  void _openRoutesDialog(Map<String, dynamic> route) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Editor(
+          route: route,
+          airports: _airports,
+          onSave: (Map<String, dynamic> updatedRoute) async {
+            if (route['id'] == 0) {
+              await Api.instance.post('/api/route', <String, dynamic>{
+                'origin': updatedRoute['origin'],
+                'destination': updatedRoute['destination'],
+                'blockTime': updatedRoute['blockTime'],
+                'routeDetails': updatedRoute['routeDetails'],
+                'commencedAt': updatedRoute['commencedAt'],
+              });
+            }
+            else {
+              await Api.instance.put('/api/route', updatedRoute);
+            }
+            await _fetchCurrentRoutes();
+            await _fetchAirports();
+          },
+          onDelete: () async {
+            if (route['id'] != 0) {
+              await Api.instance.delete("/api/route/${route["id"]}");
+              await _fetchCurrentRoutes();
+              await _fetchAirports();
+            }
+          },
+          onTerminate: () async {
+            if (route['id'] != 0) {
+              await Api.instance.put("/api/route/${route["id"]}/terminate", <String, dynamic>{});
+              await _fetchCurrentRoutes();
+              await _fetchAirports();
+            }
+          }
+        );
+      }
+    );
   }
 
   @override
