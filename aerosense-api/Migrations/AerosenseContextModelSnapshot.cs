@@ -185,14 +185,14 @@ namespace aerosense.Migrations
                     b.Property<int?>("AircraftTypeId")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("Arrival")
-                        .HasColumnType("time");
+                    b.Property<string>("Arrival")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DaysOfWeek")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("Departure")
-                        .HasColumnType("time");
+                    b.Property<string>("Departure")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FlightNumber")
                         .HasColumnType("nvarchar(max)");

@@ -1,3 +1,4 @@
+import 'package:aerosense/pages/routes/route_detail_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -6,6 +7,7 @@ class Editor extends StatefulWidget {
     super.key,
     required this.route,
     required this.airports,
+    required this.aircraftTypes,
     required this.onSave,
     this.onDelete,
     this.onTerminate
@@ -13,6 +15,7 @@ class Editor extends StatefulWidget {
   
   final Map<String, dynamic> route;
   final List<Map<String, dynamic>> airports;
+  final List<Map<String, dynamic>> aircraftTypes;
   final Future<void> Function(Map<String, dynamic> updated) onSave;
   final Future<void> Function()? onDelete;
   final Future<void> Function()? onTerminate;
@@ -83,7 +86,45 @@ class _EditorState extends State<Editor> {
   }
 
   void _openRouteDetailDialog(Map<String, dynamic> routeDetail){
+    showDialog<void>(
+      context: context, 
+      builder: (BuildContext context){
+        return RouteDetailEditor(
+          routeDetail: routeDetail,
+          aircraftTypes: widget.aircraftTypes,
+          onSave: (Map<String, dynamic> updatedRouteDetail) {
+            setState(() {
+              if (updatedRouteDetail['id'] == 0) {
+                final Map<String, dynamic> routeDetailToAdd = <String, dynamic>{
+                  'routeId': updatedRouteDetail['routeId'],
+                  'flightNumber': updatedRouteDetail['flightNumber'],
+                  'daysOfWeek': updatedRouteDetail['daysOfWeek'],
+                  'departure': updatedRouteDetail['departure'],
+                  'arrival': updatedRouteDetail['arrival'],
+                  'aircraftType': updatedRouteDetail['aircraftType']
+                };
 
+                _routeDetails.add(routeDetailToAdd);
+              }
+              else {
+                final int index = _routeDetails.indexWhere((Map<String, dynamic> rd) => rd['id'] == updatedRouteDetail['id']);
+
+                if (index != -1) {
+                  _routeDetails[index] = updatedRouteDetail;
+                }
+              }
+            });
+          },
+          onDelete: () {
+            setState(() {
+              if (routeDetail['id'] != 0) {
+                _routeDetails.removeWhere((Map<String, dynamic> rd) => rd['id'] == routeDetail['id']);
+              }
+            });
+          }
+        );
+      }
+    );
   }
 
   @override
@@ -269,7 +310,7 @@ class _EditorState extends State<Editor> {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      _openRouteDetailDialog(<String, dynamic>{'id': 0});
+                      _openRouteDetailDialog(<String, dynamic>{'id': 0, 'routeId': widget.route['id']});
                     }, 
                     icon: const Icon(Icons.add_circle),
                     iconSize: 22,
@@ -291,6 +332,14 @@ class _EditorState extends State<Editor> {
                 Column(
                   children: _routeDetails
                     .map((Map<String, dynamic> rd) {
+                      Color rowColor = Colors.black;
+                      final int aircraftRange = ((rd['aircraftType'] as Map<String, dynamic>)['range'] ?? 0) as int;
+                      final int routeDistance = (widget.route['distance'] ?? 0) as int;
+
+                      if (aircraftRange < routeDistance) {
+                        rowColor = Colors.red;
+                      }
+
                       return Center(
                         child: GestureDetector(
                           onTap: () {
@@ -305,9 +354,11 @@ class _EditorState extends State<Editor> {
                                   child: Text(
                                     rd['flightNumber'].toString(),
                                     softWrap: true,
-                                    style: const TextStyle(
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: rowColor
                                     )
                                   ),
                                 ),
@@ -318,35 +369,41 @@ class _EditorState extends State<Editor> {
                                   child: Text(
                                     '${rd['departure'].toString().substring(0, 5)} - ${rd['arrival'].toString().substring(0, 5)}',
                                     softWrap: true,
-                                    style: const TextStyle(
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: rowColor
                                     )
                                   ),
                                 ),
                               ),
                               SizedBox(
-                                width: 140,
+                                width: 130,
                                 child: Center(
                                   child: Text(
                                     rd['daysOfWeek'].toString(),
                                     softWrap: true,
-                                    style: const TextStyle(
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: rowColor
                                     )
                                   ),
                                 ),
                               ),
                               SizedBox(
-                                width: 110,
+                                width: 120,
                                 child: Center(
                                   child: Text(
                                     (rd['aircraftType'] as Map<String, dynamic>)['code'].toString(),
                                     softWrap: true,
-                                    style: const TextStyle(
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: rowColor
                                     )
                                   ),
                                 ),
@@ -526,6 +583,7 @@ class _EditorState extends State<Editor> {
                       'commencedAt': _selectedCommencedAt!.toIso8601String(),
                       'terminatedAt': widget.route['terminatedAt']
                     };
+
                     await widget.onSave(updated);
                     if (context.mounted) {
                       Navigator.of(context).pop();

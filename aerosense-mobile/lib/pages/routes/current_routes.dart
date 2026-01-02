@@ -24,12 +24,14 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
 
   List<Map<String, dynamic>> _currentRoutes = <Map<String, dynamic>>[];
   List<Map<String, dynamic>> _airports = <Map<String, dynamic>>[];
+  List<Map<String, dynamic>> _aircraftTypes = <Map<String, dynamic>>[];
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentRoutes();
     _fetchAirports();
+    _fetchAircraftTypes();
   }
 
   Future<void> _fetchCurrentRoutes() async {
@@ -52,6 +54,16 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
     });
   }
 
+  Future<void> _fetchAircraftTypes() async {
+    final List<dynamic> response = await Api.instance.get('/api/aircraft-type/active') as List<dynamic>;
+
+    setState(() {
+      _aircraftTypes = response
+        .map((dynamic e) => e as Map<String, dynamic>)
+        .toList();
+    });
+  }
+
   void _openRoutesDialog(Map<String, dynamic> route) {
     showDialog<void>(
       context: context,
@@ -59,6 +71,7 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
         return Editor(
           route: route,
           airports: _airports,
+          aircraftTypes: _aircraftTypes,
           onSave: (Map<String, dynamic> updatedRoute) async {
             if (route['id'] == 0) {
               await Api.instance.post('/api/route', <String, dynamic>{
