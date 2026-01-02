@@ -71,7 +71,7 @@ class _CurrentRoutesState extends State<CurrentRoutes> {
         return Editor(
           route: route,
           airports: _airports,
-          aircraftTypes: _aircraftTypes,
+          aircraftTypes: _aircraftTypes.where((Map<String, dynamic> at) => ((at['range'] ?? 0) as int) * 0.8 >= ((route['distance'] ?? 0) as int)).toList(),
           onSave: (Map<String, dynamic> updatedRoute) async {
             if (route['id'] == 0) {
               await Api.instance.post('/api/route', <String, dynamic>{

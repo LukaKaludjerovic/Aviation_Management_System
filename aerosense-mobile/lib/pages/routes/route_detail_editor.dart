@@ -4,12 +4,14 @@ class RouteDetailEditor extends StatefulWidget {
   const RouteDetailEditor({
     super.key,
     required this.routeDetail,
+    this.blockTime,
     required this.aircraftTypes,
     required this.onSave,
     this.onDelete,
   });
   
   final Map<String, dynamic> routeDetail;
+  final int? blockTime;
   final List<Map<String, dynamic>> aircraftTypes;
   final void Function(Map<String, dynamic> updated) onSave;
   final void Function()? onDelete;
@@ -29,6 +31,9 @@ class _EditorState extends State<RouteDetailEditor> {
   bool _daysOfWeekError = false;
   bool _departureError = false;
   bool _arrivalError = false;
+
+  bool _departureTimeCalculated = false;
+  bool _arrivalTimeCalculated = false;
 
   @override
   void initState() {
@@ -55,6 +60,30 @@ class _EditorState extends State<RouteDetailEditor> {
     else {
       _selectedAircraftType = widget.aircraftTypes.first;
     }
+  }
+
+  String calculateDepartureTime() {
+    final int hours = int.tryParse(_arrival.text.substring(0, 2)) ?? 0;
+    final int minutes = int.tryParse(_arrival.text.substring(3, 5)) ?? 0;
+    final int time = hours * 60 + minutes;
+
+    final int departureTime = (time - widget.blockTime! + 24 * 60) % (24 * 60);
+    final int departureHours = departureTime ~/ 60;
+    final int departureMinutes = departureTime % 60;
+
+    return '${departureHours.toString().padLeft(2, '0')}:${departureMinutes.toString().padLeft(2, '0')}';
+  }
+
+  String calculateArrivalTime() {
+    final int hours = int.tryParse(_departure.text.substring(0, 2)) ?? 0;
+    final int minutes = int.tryParse(_departure.text.substring(3, 5)) ?? 0;
+    final int time = hours * 60 + minutes;
+
+    final int arrivalTime = (time + widget.blockTime!) % (24 * 60);
+    final int arrivalHours = arrivalTime ~/ 60;
+    final int arrivalMinutes = arrivalTime % 60;
+
+    return '${arrivalHours.toString().padLeft(2, '0')}:${arrivalMinutes.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -209,6 +238,17 @@ class _EditorState extends State<RouteDetailEditor> {
                 onChanged: (String value) {
                   setState(() {
                     _departureError = value.trim().isEmpty;
+                    if (widget.blockTime != null &&
+                        value.length == 5 &&
+                        value[2] == ':' && 
+                        int.tryParse(value[0]) != null && 
+                        int.tryParse(value[1]) != null && 
+                        int.tryParse(value[3]) != null && 
+                        int.tryParse(value[4]) != null
+                    ) {
+                      _arrival.text = calculateArrivalTime();
+                      _arrivalTimeCalculated = true;
+                    }
                   });
                 },
               ),
@@ -252,6 +292,17 @@ class _EditorState extends State<RouteDetailEditor> {
                 onChanged: (String value) {
                   setState(() {
                     _arrivalError = value.trim().isEmpty;
+                    if (widget.blockTime != null &&
+                        value.length == 5 &&
+                        value[2] == ':' && 
+                        int.tryParse(value[0]) != null && 
+                        int.tryParse(value[1]) != null && 
+                        int.tryParse(value[3]) != null && 
+                        int.tryParse(value[4]) != null
+                    ) {
+                      _departure.text = calculateDepartureTime();
+                      _departureTimeCalculated = true;
+                    }
                   });
                 },
               ),
@@ -309,7 +360,29 @@ class _EditorState extends State<RouteDetailEditor> {
                 },
               ),
             ),
-          ]
+
+            if (_arrivalTimeCalculated) ...<Widget>[
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  'Calculated arrival time does not take time zones into consideration, please adjust it to local time manually if needed',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+
+            if (_departureTimeCalculated) ...<Widget>[
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  'Calculated departure time does not take time zones into consideration, please adjust it to local time manually if needed',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ]
+          ],
         )
       ),
       actions: <Widget>[

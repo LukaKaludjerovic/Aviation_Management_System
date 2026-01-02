@@ -91,6 +91,7 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context){
         return RouteDetailEditor(
           routeDetail: routeDetail,
+          blockTime: int.tryParse(_blockTime.text),
           aircraftTypes: widget.aircraftTypes,
           onSave: (Map<String, dynamic> updatedRouteDetail) {
             setState(() {
@@ -332,14 +333,6 @@ class _EditorState extends State<Editor> {
                 Column(
                   children: _routeDetails
                     .map((Map<String, dynamic> rd) {
-                      Color rowColor = Colors.black;
-                      final int aircraftRange = ((rd['aircraftType'] as Map<String, dynamic>)['range'] ?? 0) as int;
-                      final int routeDistance = (widget.route['distance'] ?? 0) as int;
-
-                      if (aircraftRange < routeDistance) {
-                        rowColor = Colors.red;
-                      }
-
                       return Center(
                         child: GestureDetector(
                           onTap: () {
@@ -355,10 +348,9 @@ class _EditorState extends State<Editor> {
                                     rd['flightNumber'].toString(),
                                     softWrap: true,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: rowColor
+                                      fontWeight: FontWeight.bold
                                     )
                                   ),
                                 ),
@@ -370,10 +362,9 @@ class _EditorState extends State<Editor> {
                                     '${rd['departure'].toString().substring(0, 5)} - ${rd['arrival'].toString().substring(0, 5)}',
                                     softWrap: true,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: rowColor
+                                      fontWeight: FontWeight.bold
                                     )
                                   ),
                                 ),
@@ -385,10 +376,9 @@ class _EditorState extends State<Editor> {
                                     rd['daysOfWeek'].toString(),
                                     softWrap: true,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: rowColor
+                                      fontWeight: FontWeight.bold
                                     )
                                   ),
                                 ),
@@ -400,10 +390,9 @@ class _EditorState extends State<Editor> {
                                     (rd['aircraftType'] as Map<String, dynamic>)['code'].toString(),
                                     softWrap: true,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: rowColor
+                                      fontWeight: FontWeight.bold
                                     )
                                   ),
                                 ),
