@@ -117,6 +117,36 @@ namespace aerosense.Migrations
                     b.ToTable("Airports");
                 });
 
+            modelBuilder.Entity("aerosense.models.aerosense.Maintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AircraftId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpectedCompletitionDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("ScheduledFor")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AircraftId");
+
+                    b.ToTable("Maintenance");
+                });
+
             modelBuilder.Entity("aerosense.models.aerosense.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -255,6 +285,15 @@ namespace aerosense.Migrations
                         .HasForeignKey("TypeId");
 
                     b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("aerosense.models.aerosense.Maintenance", b =>
+                {
+                    b.HasOne("aerosense.models.aerosense.Aircraft", "Aircraft")
+                        .WithMany()
+                        .HasForeignKey("AircraftId");
+
+                    b.Navigation("Aircraft");
                 });
 
             modelBuilder.Entity("aerosense.models.aerosense.Route", b =>

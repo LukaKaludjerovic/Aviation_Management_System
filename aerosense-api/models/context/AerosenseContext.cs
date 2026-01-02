@@ -17,6 +17,8 @@ public class AerosenseContext : DbContext
 
     public DbSet<Route> Routes { get; set; } = null!;
 
+    public DbSet<Maintenance> Maintenance { get; set; } = null!;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -53,6 +55,18 @@ public class AerosenseContext : DbContext
 
         modelBuilder.Entity<Route>()
             .Property(r => r.TerminatedAt)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Maintenance>()
+            .Property(m => m.ScheduledFor)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Maintenance>()
+            .Property(m => m.ExpectedCompletitionDate)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Maintenance>()
+            .Property(m => m.CompletedAt)
             .HasColumnType("date");
     }
 }
