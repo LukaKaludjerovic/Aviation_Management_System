@@ -93,6 +93,40 @@ class _ActiveAircraftState extends State<ActiveAircraft> {
     );
   }
 
+  double aircraftAgeInYears(DateTime firstFlightDate) {
+    final DateTime now = DateTime.now();
+
+    int fullYears = now.year - firstFlightDate.year;
+
+    DateTime lastAnniversary = DateTime(
+      now.year,
+      firstFlightDate.month,
+      firstFlightDate.day,
+    );
+
+    if (now.isBefore(lastAnniversary)) {
+      fullYears--;
+      lastAnniversary = DateTime(
+        now.year - 1,
+        firstFlightDate.month,
+        firstFlightDate.day,
+      );
+    }
+
+    final DateTime nextAnniversary = DateTime(
+      lastAnniversary.year + 1,
+      firstFlightDate.month,
+      firstFlightDate.day,
+    );
+
+    final int daysSince = now.difference(lastAnniversary).inDays;
+    final int daysInYear = nextAnniversary.difference(lastAnniversary).inDays;
+
+    final double age = fullYears + (daysSince / daysInYear);
+
+    return double.parse(age.toStringAsFixed(1));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,8 +308,27 @@ class _ActiveAircraftState extends State<ActiveAircraft> {
                                 ),
                               )
                             ),
+                            DataColumn(
+                              label: SizedBox(
+                                width: 50,
+                                child: Center(
+                                  child: Text(
+                                    'Age',
+                                    softWrap: true,
+                                    style: TextStyle(
+                                      fontSize: 18, 
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ),
                           ], 
                           rows: _activeAircraft.map((Map<String, dynamic> activeAircraft) {
+                            final String firstFlightString = activeAircraft['firstFlight'].toString();
+                            final DateTime firstFlight = DateTime.parse(firstFlightString);
+
                             final String eisDateString = activeAircraft['eisDate'].toString();
                             final DateTime eisDate = DateTime.parse(eisDateString);
                             final String formattedEisDate = DateFormat('dd.MM.yyyy.').format(eisDate);
@@ -360,6 +413,24 @@ class _ActiveAircraftState extends State<ActiveAircraft> {
                                     child: Center(
                                       child: Text(
                                         formattedEisDate,
+                                        softWrap: true,
+                                        style: const TextStyle(fontSize: 16),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () { 
+                                    if (Auth.instance.allowed(Permission.modifyActiveAircraft)) {
+                                      _openAircraftDialog(activeAircraft);
+                                    }
+                                  }
+                                ),
+                                DataCell(
+                                  SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                      child: Text(
+                                        aircraftAgeInYears(firstFlight).toString(),
                                         softWrap: true,
                                         style: const TextStyle(fontSize: 16),
                                         textAlign: TextAlign.center,

@@ -16,6 +16,7 @@ class Permission {
   static const String modifyCurrentRoutes = 'ModifyCurrentRoutes';
   static const String historicRoutes = 'HistoricRoutes';
   static const String pendingMaintenance = 'PendingMaintenance';
+  static const String modifyPendingMaintenance = 'ModifyPendingMaintenance';
   static const String historicMaintenance = 'HistoricMaintenance';
 
   static const List<String> all = <String>[
@@ -36,6 +37,7 @@ class Permission {
     modifyCurrentRoutes,
     historicRoutes,
     pendingMaintenance,
+    modifyPendingMaintenance,
     historicMaintenance
   ];
 }
