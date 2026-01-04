@@ -3,6 +3,7 @@ import 'package:aerosense/auth.dart';
 import 'package:aerosense/main.dart';
 import 'package:aerosense/model/menu_item.dart';
 import 'package:aerosense/model/permission.dart';
+import 'package:aerosense/pages/maintenance/editor.dart';
 import 'package:aerosense/widgets/footer.dart';
 import 'package:aerosense/widgets/header.dart';
 import 'package:aerosense/widgets/side_menu.dart';
@@ -22,11 +23,13 @@ class _PendingMaintenanceState extends State<PendingMaintenance> {
   final ScrollController _pendingMaintenanceController = ScrollController();
 
   List<Map<String, dynamic>> _pendingMaintenance = <Map<String, dynamic>>[];
+  List<Map<String, dynamic>> _aircraft = <Map<String, dynamic>>[];
 
   @override
   void initState() {
     super.initState();
     _fetchPendingMaintenance();
+    _fetchAircraft();
   }
 
   Future<void> _fetchPendingMaintenance() async {
@@ -39,7 +42,52 @@ class _PendingMaintenanceState extends State<PendingMaintenance> {
     });
   }
 
-  void _openMaintenanceDialog(Map<String, dynamic> aircraft) {}
+  Future<void> _fetchAircraft() async {
+    final List<dynamic> response = await Api.instance.get('/api/aircraft/active') as List<dynamic>;
+
+    setState(() {
+      _aircraft = response
+        .map((dynamic e) => e as Map<String, dynamic>)
+        .toList();
+    });
+  }
+
+  void _openMaintenanceDialog(Map<String, dynamic> maintenance) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Editor(
+          maintenance: maintenance,
+          aircraft: _aircraft,
+          onSave: (Map<String, dynamic> updatedMaintenance) async {
+            if (maintenance['id'] == 0) {
+              await Api.instance.post('/api/maintenance', <String, dynamic>{
+                'aircraft': updatedMaintenance['aircraft'],
+                'description': updatedMaintenance['description'],
+                'scheduledFor': updatedMaintenance['scheduledFor'],
+              });
+            }
+            else {
+              await Api.instance.put('/api/maintenance', updatedMaintenance);
+            }
+            await _fetchPendingMaintenance();
+          },
+          onDelete: () async {
+            if (maintenance['id'] != 0) {
+              await Api.instance.delete("/api/maintenance/${maintenance["id"]}");
+              await _fetchPendingMaintenance();
+            }
+          },
+          onComplete: () async {
+            if (maintenance['id'] != 0) {
+              await Api.instance.put("/api/maintenance/${maintenance["id"]}/complete", <String, dynamic>{});
+              await _fetchPendingMaintenance();
+            }
+          },
+        );
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
