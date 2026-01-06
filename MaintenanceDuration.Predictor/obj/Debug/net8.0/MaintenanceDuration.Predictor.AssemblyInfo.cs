@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MaintenanceDuration.Predictor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd23d6c63021989d476e418937a1a833da665190")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dda7fee4e940c031ee5b0b5d8bea3547f49bf507")]
 [assembly: System.Reflection.AssemblyProductAttribute("MaintenanceDuration.Predictor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MaintenanceDuration.Predictor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
