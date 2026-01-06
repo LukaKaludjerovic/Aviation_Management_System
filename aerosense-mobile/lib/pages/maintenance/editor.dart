@@ -1,3 +1,4 @@
+import 'package:aerosense/model/maintenance_work.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,7 +24,7 @@ class Editor extends StatefulWidget {
 
 class _EditorState extends State<Editor> {
   late Map<String, dynamic> _selectedAircraft;
-  late TextEditingController _description;
+  late List<String> _description;
   late TextEditingController _scheduledFor;
   late TextEditingController _expectedCompletitionDate;
 
@@ -34,10 +35,17 @@ class _EditorState extends State<Editor> {
   bool _scheduledForError = false;
   bool _expectedCompletitionDateError = false;
 
+  final ScrollController _descriptionController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    _description = TextEditingController(text: (widget.maintenance['description'] ?? '') as String);
+    _description = (widget.maintenance['description'] ?? '')
+      .toString()
+      .split(',')
+      .map((String s) => s.trim())
+      .where((String s) => s.isNotEmpty)
+      .toList();
 
     if (widget.maintenance['aircraft'] != null) {
       _selectedAircraft = widget.aircraft.firstWhere(
@@ -70,7 +78,6 @@ class _EditorState extends State<Editor> {
 
   @override
   void dispose() {
-    _description.dispose();
     _scheduledFor.dispose();
     _expectedCompletitionDate.dispose();
     super.dispose();
@@ -149,45 +156,56 @@ class _EditorState extends State<Editor> {
             ),
             const SizedBox(height: 16),
 
-            Theme(
-              data: Theme.of(context).copyWith(
-                inputDecorationTheme: const InputDecorationTheme(
-                  floatingLabelStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2,
-                    ),
-                  ),
-                )
-              ),
-              child: TextField(
-                cursorColor: Colors.black,
-                controller: _description,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold
+            const Text(
+              'Description of work',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 500,
+              child: Scrollbar(
+                controller: _descriptionController,
+                thumbVisibility: true,
+                child: ListView(
+                  controller: _descriptionController,
+                  children: MaintenanceWork.all.map((String work) {
+                    final bool checked = _description.contains(work);
+
+                    return CheckboxListTile(
+                      title: Text(work),
+                      value: checked,
+                      fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Colors.black;
+                        }
+                        return Colors.transparent;
+                      }),
+                      onChanged: (bool? val) {
+                        setState(() {
+                          if (val ?? false) {
+                            _description.add(work);
+
+                            if (work == 'Corrosion Treatment' || work == 'Cabin Reconfiguration') {
+                              _description.add('A Check');
+                            }
+                            if (work == 'Landing Gear Replacement') {
+                              _description.add('D Check');
+                            }
+                          } else {
+                            _description.remove(work);
+
+                            if (work == 'A Check') {
+                              _description.remove('Corrosion Treatment');
+                              _description.remove('Cabin Reconfiguration');
+                            }
+                            if (work == 'D Check') {
+                              _description.remove('Landing Gear Replacement');
+                            }
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: const TextStyle(
-                    color: Colors.black,
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey
-                    ),
-                  ),
-                  border: const OutlineInputBorder(),
-                  errorText: _descriptionError ? 'Description is required' : null
-                ),
-                onChanged: (String value) {
-                  setState(() {
-                    _descriptionError = value.trim().isEmpty;
-                  });
-                },
               ),
             ),
             const SizedBox(height: 16),
@@ -364,7 +382,16 @@ class _EditorState extends State<Editor> {
             if (!isNew) 
               const Center(
                 child: Text(
-                  'Expected Completition Date has been automatically estimated based on previous maintenance of same parts, please modify it if it is not correct',
+                  'Expected Completition Date has been automatically estimated, please modify it if it is not correct',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            
+            if (!isNew) 
+              const Center(
+                child: Text(
+                  'If you change Expected Completition Date manually, prediction will not work nevertheless you changed criteria',
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
@@ -436,7 +463,7 @@ class _EditorState extends State<Editor> {
                 TextButton(
                   onPressed: () async {
                     setState(() {
-                      _descriptionError = _description.text.trim().isEmpty;
+                      _descriptionError = _description.join(',').trim().isEmpty;
                       _scheduledForError = _scheduledFor.text.trim().isEmpty;
                       _expectedCompletitionDateError = _expectedCompletitionDate.text.trim().isEmpty && !isNew;
                     });
@@ -448,7 +475,7 @@ class _EditorState extends State<Editor> {
                     final Map<String, dynamic> updated = <String, dynamic>{
                       'id': widget.maintenance['id'],
                       'aircraft': _selectedAircraft,
-                      'description': _description.text.trim(),
+                      'description': _description.join(',').trim(),
                       'scheduledFor': _selectedScheduledFor!.toIso8601String(),
                       'expectedCompletitionDate': _selectedExpectedCompletitionDate?.toIso8601String(),
                       'completedAt': widget.maintenance['completedAt']

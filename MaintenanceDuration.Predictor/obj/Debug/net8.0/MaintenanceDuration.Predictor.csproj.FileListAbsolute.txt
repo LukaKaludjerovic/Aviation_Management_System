@@ -1,0 +1,13 @@
+/Users/luka/aerosense/MaintenanceDuration.Predictor/bin/Debug/net8.0/MaintenanceDuration.Predictor.deps.json
+/Users/luka/aerosense/MaintenanceDuration.Predictor/bin/Debug/net8.0/MaintenanceDuration.Predictor.dll
+/Users/luka/aerosense/MaintenanceDuration.Predictor/bin/Debug/net8.0/MaintenanceDuration.Predictor.pdb
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.csproj.AssemblyReference.cache
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.GeneratedMSBuildEditorConfig.editorconfig
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.AssemblyInfoInputs.cache
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.AssemblyInfo.cs
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.csproj.CoreCompileInputs.cache
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.sourcelink.json
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.dll
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/refint/MaintenanceDuration.Predictor.dll
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/MaintenanceDuration.Predictor.pdb
+/Users/luka/aerosense/MaintenanceDuration.Predictor/obj/Debug/net8.0/ref/MaintenanceDuration.Predictor.dll

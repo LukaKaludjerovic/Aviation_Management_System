@@ -3,6 +3,8 @@ namespace aerosense.controllers;
 using aerosense.extensions;
 using aerosense.models.aerosense;
 using aerosense.models.context;
+using aerosense.utils;
+using MaintenanceDuration.Predictor.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +43,7 @@ public class MaintenanceController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] Maintenance maintenance)
+    public IActionResult Create([FromBody] Maintenance maintenance, [FromServices] PredictionService predictor)
     {
         var ctx = new AerosenseContext();
 
@@ -50,9 +52,17 @@ public class MaintenanceController : ControllerBase
             ctx.Aircraft.Attach(maintenance.Aircraft);
         }
 
+        var mlData = MLUtils.ConvertMaintenanceToMaintenanceData(maintenance);
+        var predictedDays = 25;
+
+        if (mlData != null)
+        {
+            predictedDays = (int)Math.Ceiling(predictor.Predict(mlData));
+        }
+
         if (maintenance.ScheduledFor != null)
         {
-            maintenance.ExpectedCompletitionDate = maintenance.ScheduledFor.Value.AddDays(14);
+            maintenance.ExpectedCompletitionDate = maintenance.ScheduledFor.Value.AddDays(predictedDays);
         }
 
         ctx.Maintenance.Add(maintenance);
@@ -62,12 +72,13 @@ public class MaintenanceController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Update([FromBody] Maintenance maintenance)
+    public IActionResult Update([FromBody] Maintenance maintenance, [FromServices] PredictionService predictor)
     {
         var ctx = new AerosenseContext();
 
         var dbMaintenance = ctx.Maintenance
             .Include(m => m.Aircraft)
+            .ThenInclude(a => a!.Type)
             .FirstOrDefault(m => m.Id == maintenance.Id);
 
         if (dbMaintenance == null)
@@ -75,13 +86,53 @@ public class MaintenanceController : ControllerBase
             return NotFound("Maintenance not found".ToResponseError());
         }
 
-        dbMaintenance.Aircraft = maintenance.Aircraft;
+        if (dbMaintenance.ScheduledFor <= DateTime.Now)
+        {
+            return BadRequest("Maintence has already started".ToResponseError());
+        }
+
+        var needsToPredict = maintenance.Description != dbMaintenance.Description;
+
+        if (maintenance.Aircraft != null && dbMaintenance.Aircraft != null)
+        {
+            needsToPredict |= maintenance.Aircraft.Configuration != dbMaintenance.Aircraft.Configuration;
+
+            if (maintenance.Aircraft.Type != null && dbMaintenance.Aircraft.Type != null)
+            {
+                needsToPredict |= maintenance.Aircraft.Type.Code != dbMaintenance.Aircraft.Type.Code;
+            }
+        }
+
+        if (maintenance.Aircraft != null)
+        {
+            dbMaintenance.Aircraft = ctx.Aircraft
+                .Include(a => a.Type)
+                .FirstOrDefault(a => a.Id == maintenance.Aircraft.Id);
+        }
+
         dbMaintenance.Description = maintenance.Description;
         dbMaintenance.ScheduledFor = maintenance.ScheduledFor;
 
-        if (maintenance.ScheduledFor != null)
+        var expectedDateNotChanged = maintenance.ExpectedCompletitionDate == dbMaintenance.ExpectedCompletitionDate;
+
+        if (expectedDateNotChanged)
         {
-            maintenance.ExpectedCompletitionDate = maintenance.ScheduledFor.Value.AddDays(14);
+            if (needsToPredict && dbMaintenance.ExpectedCompletitionDate != null && dbMaintenance.ScheduledFor != null)
+            {
+                var mlData = MLUtils.ConvertMaintenanceToMaintenanceData(dbMaintenance);
+                var predictedDays = 0;
+
+                if (mlData != null)
+                {
+                    predictedDays = (int)Math.Ceiling(predictor.Predict(mlData));
+                }
+
+                dbMaintenance.ExpectedCompletitionDate = dbMaintenance.ScheduledFor.Value.AddDays(predictedDays);
+            }
+        }
+        else
+        {
+            dbMaintenance.ExpectedCompletitionDate = maintenance.ExpectedCompletitionDate;
         }
 
         ctx.SaveChanges();

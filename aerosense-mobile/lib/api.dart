@@ -62,16 +62,44 @@ class Api {
     } 
 
     if (ctx != null) {
-      ScaffoldMessenger
-        .of(ctx)
-        .showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating
-          ),
-        );
+      _showGlobalError(message);
     }
+  }
+
+  void _showGlobalError(String message) {
+    final NavigatorState? navigator = navigatorKey.currentState;
+    final OverlayState? overlay = navigator?.overlay;
+
+    if (overlay == null) {
+      return;
+    }
+
+    final OverlayEntry entry = OverlayEntry(
+      builder: (_) => Positioned(
+        bottom: MediaQuery.of(overlay.context).padding.bottom + 12,
+        left: 16,
+        right: 16,
+        child: Material(
+          color: Colors.red,
+          elevation: 12,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(entry);
+
+    Future<void>.delayed(
+      const Duration(seconds: 3),
+      entry.remove
+    );
   }
 
   Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParams}) async {

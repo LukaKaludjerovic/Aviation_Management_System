@@ -26,4 +26,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MaintenanceDuration.Predictor\MaintenanceDuration.Predictor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="models/ml/maintenance_model.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
