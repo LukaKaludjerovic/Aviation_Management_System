@@ -48,7 +48,7 @@ public static class DataGenerator
         if (hasCabinReconfiguration == 1) workDays += 3f;
 
         var businessSeatsOptions = new[]{0, 0, 0, 0, 0, 18, 21, 22};
-        var economySeatsOptions = new[]{70, 72, 108, 144, 180, 250, 236, 240};
+        var economySeatsOptions = new[]{70, 72, 118, 144, 180, 250, 236, 240};
         var aircraftTypeOptions = new[]{"ATR 72-600", "Embraer ERJ-195", "Airbus A319-100", "Airbus A320-200", "Airbus A330-200"};
 
         var seatsPicked = _rand.Next(8);
