@@ -2,9 +2,9 @@ namespace aerosense;
 
 using aerosense.authorization;
 using Microsoft.AspNetCore.Authentication;
-using MaintenanceDuration.Predictor.services;
 using Microsoft.ML;
-using MaintenanceDuration.Predictor.models;
+using MaintenanceDurationServices = MaintenanceDuration.Predictor.services;
+using RouteBlockTimeServices = RouteBlockTime.Predictor.services;
 
 public class Program
 {
@@ -13,15 +13,22 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var mlContext = new MLContext(seed: 42);
-        var modelPath = Path.Combine(builder.Environment.ContentRootPath, "models/ml/maintenance_model.zip");
+        var maintenanceDurationModelPath = Path.Combine(builder.Environment.ContentRootPath, "models/ml/maintenance_model.zip");
+        var routeBlockTimeModelPath = Path.Combine(builder.Environment.ContentRootPath, "models/ml/route_blocktime_model.zip");
 
         Console.WriteLine("Training maintenance duration ML model...");
-        TrainingService.TrainAndSave(mlContext, modelPath);
-        Console.WriteLine("Model trained and saved to " + modelPath);
+        MaintenanceDurationServices.TrainingService.TrainAndSave(mlContext, maintenanceDurationModelPath);
+        Console.WriteLine("Model trained and saved to " + maintenanceDurationModelPath);
 
-        var model = mlContext.Model.Load(modelPath, out _);
+        Console.WriteLine("Training route blocktime ML model...");
+        RouteBlockTimeServices.TrainingService.TrainAndSave(mlContext, routeBlockTimeModelPath);
+        Console.WriteLine("Model trained and saved to " + routeBlockTimeModelPath);
 
-        builder.Services.AddSingleton(sp => new PredictionService(modelPath));
+        mlContext.Model.Load(maintenanceDurationModelPath, out _);
+        mlContext.Model.Load(routeBlockTimeModelPath, out _);
+
+        builder.Services.AddSingleton(sp => new MaintenanceDurationServices.PredictionService(maintenanceDurationModelPath));
+        builder.Services.AddSingleton(sp => new RouteBlockTimeServices.PredictionService(routeBlockTimeModelPath));
 
         builder.Services
             .AddAuthentication("TokenAuthentication")

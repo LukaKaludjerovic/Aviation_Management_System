@@ -11,10 +11,10 @@ public class TrainingService
         var data = Enumerable
             .Range(0, 3000)
             .Select(_ => DataGenerator.Generate());
-        
+
         var dataView = mlContext.Data
             .LoadFromEnumerable(data);
-        
+
         var pipeline = mlContext.Transforms.Categorical
             .OneHotEncoding("AircraftTypeEncoded", "AircraftType")
             .Append(mlContext.Transforms.Categorical.OneHotEncoding("CheckTypeEncoded", "CheckType"))
@@ -38,12 +38,11 @@ public class TrainingService
                 {
                     NumberOfTrees = 200,
                     NumberOfLeaves = 20,
-                    MinimumExampleCountPerLeaf = 5
-                }
-            ));
-        
+                    MinimumExampleCountPerLeaf = 5,
+                }));
+
         var model = pipeline.Fit(dataView);
-        
+
         mlContext.Model.Save(model, dataView.Schema, modelPath);
     }
 }

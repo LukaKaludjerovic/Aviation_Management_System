@@ -4,19 +4,20 @@ using MaintenanceDuration.Predictor.models;
 
 public static class DataGenerator
 {
-    private static readonly Random _rand = new(42);
+    private static readonly Random Rand = new (42);
 
     public static IEnumerable<MaintenanceData> GenerateTestSet(int count)
     {
         for (int i = 0; i < count; i++)
+        {
             yield return Generate();
+        }
     }
-
 
     public static MaintenanceData Generate()
     {
-        var checkType = Pick(["A", "C", "D", ""]);
-        
+        var checkType = Pick(["A", "C", "D", string.Empty]);
+
         var corrosion = checkType != "A" && Chance(0.2);
         var lgReplace = checkType == "D" && Chance(0.15);
         var cabinReconf = checkType != "A" && Chance(0.1);
@@ -37,21 +38,56 @@ public static class DataGenerator
             (cabinReconf ? 10 : 0);
 
         float workDays = 0;
-        if (hasStructuralInspection == 1) workDays += 2f;
-        if (hasCorrosionTreatment == 1) workDays += 3f;
-        if (hasWingInspection == 1) workDays += 1.5f;
-        if (hasLandingGearInspection == 1) workDays += 2f;
-        if (hasLandingGearReplacement == 1) workDays += 4f;
-        if (hasEngineBorescope == 1) workDays += 2f;
-        if (hasAPUInspection == 1) workDays += 1.5f;
-        if (hasAvionicsUpdate == 1) workDays += 1f;
-        if (hasCabinReconfiguration == 1) workDays += 3f;
+        if (hasStructuralInspection == 1)
+        {
+            workDays += 2f;
+        }
 
-        var businessSeatsOptions = new[]{0, 0, 0, 0, 0, 18, 21, 22};
-        var economySeatsOptions = new[]{70, 72, 118, 144, 180, 250, 236, 240};
-        var aircraftTypeOptions = new[]{"ATR 72-600", "Embraer ERJ-195", "Airbus A319-100", "Airbus A320-200", "Airbus A330-200"};
+        if (hasCorrosionTreatment == 1)
+        {
+            workDays += 3f;
+        }
 
-        var seatsPicked = _rand.Next(8);
+        if (hasWingInspection == 1)
+        {
+            workDays += 1.5f;
+        }
+
+        if (hasLandingGearInspection == 1)
+        {
+            workDays += 2f;
+        }
+
+        if (hasLandingGearReplacement == 1)
+        {
+            workDays += 4f;
+        }
+
+        if (hasEngineBorescope == 1)
+        {
+            workDays += 2f;
+        }
+
+        if (hasAPUInspection == 1)
+        {
+            workDays += 1.5f;
+        }
+
+        if (hasAvionicsUpdate == 1)
+        {
+            workDays += 1f;
+        }
+
+        if (hasCabinReconfiguration == 1)
+        {
+            workDays += 3f;
+        }
+
+        var businessSeatsOptions = new[] { 0, 0, 0, 0, 0, 18, 21, 22 };
+        var economySeatsOptions = new[] { 70, 72, 118, 144, 180, 250, 236, 240 };
+        var aircraftTypeOptions = new[] { "ATR 72-600", "Embraer ERJ-195", "Airbus A319-100", "Airbus A320-200", "Airbus A330-200" };
+
+        var seatsPicked = Rand.Next(8);
         int aircraftPicked;
 
         if (seatsPicked <= 1)
@@ -66,7 +102,7 @@ public static class DataGenerator
         {
             aircraftPicked = seatsPicked - 1;
         }
-        
+
         var aircraftType = aircraftTypeOptions[aircraftPicked];
         var businessSeats = businessSeatsOptions[seatsPicked];
         var economySeats = economySeatsOptions[seatsPicked];
@@ -80,7 +116,7 @@ public static class DataGenerator
             seatDays +
             checkFactor +
             workDays +
-            (float)_rand.NextDouble() * 2.5f;
+            ((float)Rand.NextDouble() * 2.5f);
 
         return new MaintenanceData()
         {
@@ -101,19 +137,19 @@ public static class DataGenerator
 
             TotalWorkScore = workScore + checkFactor,
             CheckType = checkType,
-            DaysToComplete = days
+            DaysToComplete = days,
         };
     }
 
     private static bool Chance(double p)
     {
-        return _rand.NextDouble() < p;
-    } 
+        return Rand.NextDouble() < p;
+    }
 
     private static T Pick<T>(T[] values)
     {
-        return values[_rand.Next(values.Length)];
-    } 
+        return values[Rand.Next(values.Length)];
+    }
 
     private static float CalculateCheckFactor(string aircraftType, string checkType)
     {
@@ -169,7 +205,7 @@ public static class DataGenerator
 
             return checkFactor;
         }
-            
+
         if (aircraftType.Contains("A330"))
         {
             checkFactor = checkType switch
@@ -197,25 +233,35 @@ public static class DataGenerator
     private static float AircraftBaseDays(string aircraftType)
     {
         if (aircraftType.Contains("ATR"))
+        {
             return 3f;
+        }
 
         if (aircraftType.Contains("ERJ"))
+        {
             return 4f;
+        }
 
         if (aircraftType.Contains("A319"))
+        {
             return 5f;
+        }
 
         if (aircraftType.Contains("A320"))
+        {
             return 6f;
-            
+        }
+
         if (aircraftType.Contains("A330"))
+        {
             return 9f;
+        }
 
         return 5f;
     }
 
     private static float SeatFactor(int business, int economy)
     {
-        return business * 0.15f + economy * 0.05f;
+        return (business * 0.15f) + (economy * 0.05f);
     }
 }

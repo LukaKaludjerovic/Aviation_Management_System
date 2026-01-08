@@ -6,22 +6,22 @@ using Microsoft.ML;
 
 public class PredictionService
 {
-    private readonly MLContext _mlContext;
-    private readonly ITransformer _model;
-    private readonly PredictionEngine<MaintenanceData, MaintenancePrediction> _engine;
+    private readonly MLContext mlContext;
+    private readonly ITransformer model;
+    private readonly PredictionEngine<MaintenanceData, MaintenancePrediction> engine;
 
     public PredictionService(string modelPath)
     {
-        _mlContext = new MLContext(seed: 1);
+        mlContext = new MLContext(seed: 1);
 
-        _model = _mlContext.Model.Load(modelPath, out var schema);
+        model = mlContext.Model.Load(modelPath, out var schema);
 
-        _engine = _mlContext.Model.CreatePredictionEngine<MaintenanceData, MaintenancePrediction>(_model);
+        engine = mlContext.Model.CreatePredictionEngine<MaintenanceData, MaintenancePrediction>(model);
     }
 
     public float Predict(MaintenanceData input)
     {
-        var prediction = _engine.Predict(input);
+        var prediction = engine.Predict(input);
 
         return prediction.Score;
     }
@@ -29,9 +29,9 @@ public class PredictionService
     public (double rmse, double r2) Evaluate(int testSetSize)
     {
         var testData = DataGenerator.GenerateTestSet(testSetSize);
-        var testDataView = _mlContext.Data.LoadFromEnumerable(testData);
-        var predictions = _model.Transform(testDataView);
-        var metrics = _mlContext.Regression.Evaluate(predictions);
+        var testDataView = mlContext.Data.LoadFromEnumerable(testData);
+        var predictions = model.Transform(testDataView);
+        var metrics = mlContext.Regression.Evaluate(predictions);
 
         return (metrics.RootMeanSquaredError, metrics.RSquared);
     }

@@ -31,7 +31,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RouteBlockTime.Predictor\RouteBlockTime.Predictor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="models/ml/maintenance_model.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="models/ml/route_blocktime_model.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

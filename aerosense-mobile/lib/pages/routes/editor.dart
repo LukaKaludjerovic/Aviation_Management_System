@@ -254,48 +254,50 @@ class _EditorState extends State<Editor> {
             ),
             const SizedBox(height: 16),
 
-            Theme(
-              data: Theme.of(context).copyWith(
-                inputDecorationTheme: const InputDecorationTheme(
-                  floatingLabelStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2,
+            if (!isNew) ...<Widget>[
+              Theme(
+                data: Theme.of(context).copyWith(
+                  inputDecorationTheme: const InputDecorationTheme(
+                    floatingLabelStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                )
-              ),
-              child: TextField(
-                cursorColor: Colors.black,
-                controller: _blockTime,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold
-                ),
-                decoration: InputDecoration(
-                  labelText: 'Block Time (min)',
-                  labelStyle: const TextStyle(
-                    color: Colors.black,
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  border: const OutlineInputBorder(),
-                  errorText: _blockTimeError ? 'Block Time is required' : null
+                  )
                 ),
-                onChanged: (String value) {
-                  setState(() {
-                    _blockTimeError = value.trim().isEmpty;
-                  });
-                },
+                child: TextField(
+                  cursorColor: Colors.black,
+                  controller: _blockTime,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold
+                  ),
+                  decoration: InputDecoration(
+                    labelText: 'Block Time (min)',
+                    labelStyle: const TextStyle(
+                      color: Colors.black,
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey
+                      ),
+                    ),
+                    border: const OutlineInputBorder(),
+                    errorText: _blockTimeError ? 'Block Time is required' : null
+                  ),
+                  onChanged: (String value) {
+                    setState(() {
+                      _blockTimeError = value.trim().isEmpty;
+                    });
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16)
+            ],
 
             if (!isNew) ...<Widget>[
               Row(

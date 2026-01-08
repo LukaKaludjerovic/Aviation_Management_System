@@ -3,6 +3,8 @@ namespace aerosense.utils;
 using System.Text.RegularExpressions;
 using aerosense.models.aerosense;
 using MaintenanceDuration.Predictor.models;
+using RouteBlockTime.Predictor.models;
+using RouteBlockTime.Predictor.utilities;
 
 public static class MLUtils
 {
@@ -70,6 +72,30 @@ public static class MLUtils
         mlMaintenance.TotalWorkScore = CalculateTotalWorkScore(mlMaintenance);
 
         return mlMaintenance;
+    }
+
+    public static RouteData? ConvertRouteToRouteData(Route route)
+    {
+        if (route.Destination == null || route.Origin == null)
+        {
+            return null;
+        }
+
+        var deltaLon = (float)(route.Destination.Longitude - route.Origin.Longitude);
+        var absDeltaLat = (float)Math.Abs(route.Destination.Latitude - route.Origin.Latitude);
+        var isEastbound = deltaLon > 0 ? 1 : 0;
+        float turbopropProb = AircraftUtil.TurbopropProbability((float)route.Distance);
+
+        var mlRoute = new RouteData()
+        {
+            DistanceKm = (float)route.Distance,
+            DeltaLongitude = deltaLon,
+            AbsDeltaLatitude = absDeltaLat,
+            IsEastbound = isEastbound,
+            TurbopropProbability = turbopropProb,
+        };
+
+        return mlRoute;
     }
 
     private static int CalculateTotalWorkScore(MaintenanceData mlMaintenance)

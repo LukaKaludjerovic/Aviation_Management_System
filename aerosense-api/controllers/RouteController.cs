@@ -7,6 +7,7 @@ using aerosense.utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RouteBlockTime.Predictor.services;
 
 [ApiController]
 [Route("api/route")]
@@ -48,7 +49,7 @@ public class RouteController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] Route route)
+    public IActionResult Create([FromBody] Route route, [FromServices] PredictionService predictor)
     {
         var ctx = new AerosenseContext();
 
@@ -62,6 +63,16 @@ public class RouteController : ControllerBase
 
         route.Distance = GeoUtils.GreatCircleDistance(route.Origin, route.Destination);
 
+        var mlData = MLUtils.ConvertRouteToRouteData(route);
+        var predictedBlockTime = 0;
+
+        if (mlData != null)
+        {
+            predictedBlockTime = (int)Math.Ceiling(predictor.Predict(mlData));
+        }
+
+        route.BlockTime = predictedBlockTime;
+
         ctx.Routes.Add(route);
         ctx.SaveChanges();
 
@@ -69,11 +80,13 @@ public class RouteController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Update([FromBody] Route route)
+    public IActionResult Update([FromBody] Route route, [FromServices] PredictionService predictor)
     {
         var ctx = new AerosenseContext();
 
         var dbRoute = ctx.Routes
+            .Include(r => r.Origin)
+            .Include(r => r.Destination)
             .Include(r => r.RouteDetails)
             .ThenInclude(rd => rd.AircraftType)
             .FirstOrDefault(r => r.Id == route.Id);
@@ -83,12 +96,57 @@ public class RouteController : ControllerBase
             return NotFound("Route not found".ToResponseError());
         }
 
-        dbRoute.Origin = route.Origin;
-        dbRoute.Destination = route.Destination;
-        dbRoute.Distance = route.Distance;
-        dbRoute.BlockTime = route.BlockTime;
+        var needsToPredict = false;
+
+        if (route.Origin != null && dbRoute.Origin != null)
+        {
+            needsToPredict |= dbRoute.Origin.IATACode != route.Origin.IATACode;
+        }
+
+        if (route.Destination != null && dbRoute.Destination != null)
+        {
+            needsToPredict |= dbRoute.Destination.IATACode != route.Destination.IATACode;
+        }
+
+        if (route.Origin != null)
+        {
+            dbRoute.Origin = ctx.Airports.FirstOrDefault(a => a.Id == route.Origin.Id);
+        }
+
+        if (route.Destination != null)
+        {
+            dbRoute.Destination = ctx.Airports.FirstOrDefault(a => a.Id == route.Destination.Id);
+        }
+
+        if (route.Origin != null && route.Destination != null)
+        {
+            dbRoute.Distance = GeoUtils.GreatCircleDistance(route.Origin, route.Destination);
+        }
+
         dbRoute.RouteDetails = route.RouteDetails;
         dbRoute.CommencedAt = route.CommencedAt;
+
+        var blockTimeNotChanged = route.BlockTime == dbRoute.BlockTime;
+
+        if (blockTimeNotChanged)
+        {
+            if (needsToPredict)
+            {
+                var mlData = MLUtils.ConvertRouteToRouteData(dbRoute);
+                var predictedBlockTime = 0;
+
+                if (mlData != null)
+                {
+                    predictedBlockTime = (int)Math.Ceiling(predictor.Predict(mlData));
+                }
+
+                dbRoute.BlockTime = predictedBlockTime;
+            }
+        }
+        else
+        {
+            dbRoute.BlockTime = route.BlockTime;
+        }
 
         ctx.SaveChanges();
 
