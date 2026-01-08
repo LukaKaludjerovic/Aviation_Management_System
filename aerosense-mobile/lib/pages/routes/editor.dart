@@ -487,6 +487,33 @@ class _EditorState extends State<Editor> {
               ),
             ),
             const SizedBox(height: 16),
+
+            if (isNew)
+              const Center(
+                child: Text(
+                  'Block Time will be automatically estimated based on other routes with similar distance',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            
+            if (!isNew) 
+              const Center(
+                child: Text(
+                  'Block Time has been automatically estimated, please modify it if it is not correct',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            
+            if (!isNew) 
+              const Center(
+                child: Text(
+                  'If you change Block Time manually, prediction will not work nevertheless you changed airports',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
           ],
         ),
       ),
