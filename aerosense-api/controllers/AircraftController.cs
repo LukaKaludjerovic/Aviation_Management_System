@@ -47,6 +47,11 @@ public class AircraftController : ControllerBase
     {
         var ctx = new AerosenseContext();
 
+        if (aircraft.Type != null)
+        {
+            ctx.Attach(aircraft.Type);
+        }
+
         ctx.Aircraft.Add(aircraft);
         ctx.SaveChanges();
 
@@ -57,6 +62,11 @@ public class AircraftController : ControllerBase
     public IActionResult Update([FromBody] Aircraft aircraft)
     {
         var ctx = new AerosenseContext();
+
+        if (aircraft.Type != null)
+        {
+            ctx.Attach(aircraft.Type);
+        }
 
         ctx.Aircraft.Update(aircraft);
         ctx.SaveChanges();
