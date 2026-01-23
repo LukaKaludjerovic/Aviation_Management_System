@@ -123,6 +123,14 @@ public class RouteController : ControllerBase
             dbRoute.Distance = GeoUtils.GreatCircleDistance(route.Origin, route.Destination);
         }
 
+        foreach (var routeDetail in route.RouteDetails)
+        {
+            if (routeDetail.AircraftType != null)
+            {
+                routeDetail.AircraftType = ctx.AircraftTypes.FirstOrDefault(at => at.Id == routeDetail.AircraftType.Id);
+            }
+        }
+
         dbRoute.RouteDetails = route.RouteDetails;
         dbRoute.CommencedAt = route.CommencedAt;
 
